@@ -17,19 +17,22 @@ const dashboardRoutes = [
     layout: "/admin"
   },
   {
-    path: "/user",
-    name: "User Profile",
-    icon: "pe-7s-user",
-    component: UserProfile,
-    layout: "/admin"
-  },
-  {
     path: "/table",
-    name: "Table List",
+    name: "Admin",
     icon: "pe-7s-note2",
     component: TableList,
     layout: "/admin"
   },
+  
+  
+  {
+    path: "/user",
+    name: "Customer",
+    icon: "pe-7s-user",
+    component: UserProfile,
+    layout: "/admin"
+  },
+  
   {
     path: "/typography",
     name: "Typography",

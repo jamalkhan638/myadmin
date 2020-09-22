@@ -1,0 +1,33 @@
+.heading {
+    text-transform: uppercase;
+    position: relative;
+    background: #000000
+}
+
+.heading h1 {
+  text-align: center;
+  overflow: hidden;
+  color: #fff;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font: 30px/32px 'Roboto', sans-serif;
+    padding: 100px 0;;
+    /* background: url(../images/border.png) no-repeat center; */
+}
+.heading h1:before,
+.heading h1:after {
+  content: '';
+  width: 100%;
+  display: inline-block;
+  border-bottom: 1px solid;
+  height: 0;
+  vertical-align: middle;
+}
+.heading h1:before {
+  margin-left: -100%;
+  margin-right: 80px;
+}
+.heading h1:after {
+  margin-left: 80px;
+  margin-right: -100%;
+}
