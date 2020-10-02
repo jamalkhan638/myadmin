@@ -12,7 +12,7 @@ import { FormatAlignCenter } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Line, Circle } from 'rc-progress';
 
-export default function TableList(props) {
+export default function Rides(props) {
 
 
   //for Pagination
@@ -20,8 +20,10 @@ export default function TableList(props) {
   const [activePg, setActivePage] = useState(1);
   const [pageRange, setPageRange] = useState();
   const [data, setData] = useState([])
+
   const [PageLimit, setPageLimit] = useState(5)
   const [searchData, setSearchData] = useState("");
+  const [customerVar, setCustomerVar] = useState([])
 
   let token = localStorage.getItem('x-access-token');
   const headers = {
@@ -35,19 +37,16 @@ export default function TableList(props) {
     setPageRange(5)
     axios.get(
 
-      `http://localhost:8080/api/admin/?limit=${PageLimit}&page=${activePg}`,
+      `http://localhost:8080/api/ride`,
       { headers }
 
     )
       .then(response => {
-
-
-        setPageRange(Math.ceil(response.data.count / PageLimit))
-        setTotalItemsCount(response.data.count)
-
-        setData(response.data.data)
-
-
+     
+        CustomerMobileField(response.data.data)
+        DriverMobileField(response.data.data)
+        CategoryMobileField(response.data.data)
+       
 
       })
 
@@ -55,100 +54,130 @@ export default function TableList(props) {
   }
     , []);
 
+const CustomerMobileField= (data)=>{
 
-  const deleteItemFromState = (id) => {
-    console.log(id)
-    axios.delete(
-      `http://localhost:8080/api/admin/${id}`,
+
+  for (let i = 0; i < data.length; i++) {
+
+    axios.get(
+      `http://localhost:8080/api/customer/${data[i].customer}`,
       {
         headers
-      }
-
-    )
+      })
       .then(response => {
-        alert(response.data.msg)
-      },
-        (error) => {
-          var status = error.response.status
-          console.log(error)
-        }
-      );
-  }
+        if (response.data) {
+          let newData = []
 
-  const BlockItemFromState = (admin) => {
-    
-    axios.patch(
-      `http://localhost:8080/api/admin/block/${admin._id}`,{},
+          if (response.data._id === data[i].customer) {
+         
+            data[i].mobile = response.data.mobile;
+          }
+     
+        }
+      })
+  }
+}
+
+
+
+const DriverMobileField= (data)=>{
+
+  for (let i = 0; i < data.length; i++) {
+   
+    axios.get(
+      `http://localhost:8080/api/driver/${data[i].driver}`,
       {
         headers
-      }
-
-    )
+      })
       .then(response => {
-    
-        alert(response.data.message)
-
-
-
-      },
-        (error) => {
-          var status = error.response.status
-          console.log(status)
+        if (response.data) {
+          if (response.data._id === data[i].driver) {
+            console.log(1)
+            data[i].driverNumber = response.data.mobile;
+          }
         }
-      );
-
-
-
+      })
   }
+}
+
+
+const CategoryMobileField= (data)=>{
+
+
+  for (let i = 0; i < data.length; i++) {
+   
+    axios.get(
+      `http://localhost:8080/api/category/${data[i].category}`,
+      {
+        headers
+      })
+      .then(response => {
+        if (response.data) {
+          let newData = []
+
+          if (response.data._id === data[i].category) {
+            
+            data[i].cetegoryName = response.data.name;
+          }
+    
+          setCustomerVar(data)
+        }
+      })
+  }
+}
+
+
+
+
+
+
 
   const ActiveRenderBody = () => {
 
-    if (data != undefined && data != null) {
-      return data.map((admin) => {
+    return customerVar.map((admin) => {
 
-        {
+      {
+        var date = new Date(admin.createdAt)
+        
 
-          if (admin.isBlocked != true) {
 
-            return (
+        return (
 
-              <tr key={admin._id} >
+          <tr key={admin._id} >
 
-                <td>{admin.name}</td>
-                <td>{admin.mobile}</td>
-                <td>{admin.email}</td>
-                <td>{admin.accessLevel}</td>
-                <td>{admin.gender}</td>
-                <td>{admin.city}</td>
-                <td>active</td>
-                <td>  <IconButton>
-                  <BlockIcon color="primary" onClick={e => {
-                    BlockItemFromState(admin)
-                  }
+            <td>{(new Date(admin.createdAt)).toLocaleDateString()}</td>
+            <td>{(new Date(admin.createdAt)).toLocaleTimeString()}</td>
+            <td>{admin.mobile}</td>
+            <td>{admin.driverNumber}</td>
+            <td>{admin.cetegoryName}</td>
+            <td>{admin.city}</td>
+            <td>active</td>
+            <td>  <IconButton>
+              <BlockIcon color="primary" 
+              
 
-                  } /> </IconButton>
-                  <IconButton>
-                    <DeleteIcon color="primary" onClick={e => {
-                      deleteItemFromState(admin._id)
-                    }
+               /> </IconButton>
+              <IconButton>
+                <DeleteIcon color="primary" 
+                
 
-                    } />
-                  </IconButton>
-                </td>
+                 />
+              </IconButton>
+            </td>
 
 
 
-              </tr>
+          </tr>
 
 
-            )
-          }
-
-        }
+        );
+      }
 
 
-      })
-    }
+
+    });
+
+
   }
 
 
@@ -177,7 +206,7 @@ export default function TableList(props) {
 
 
   const handlePageChange = (pageNumber) => {
-    console.log(pageNumber)
+   
     axios.get(
 
       `http://localhost:8080/api/admin/?limit=${PageLimit}&page=${pageNumber}`,
@@ -209,14 +238,14 @@ export default function TableList(props) {
       <div className="container-fluid">
         <div className="row" style={{ marginLeft: "10px", marginTop: "10px" }}>
 
-          <div className="col-sm-8">
+          {/* <div className="col-sm-8">
             <Button variant="outlined" color="primary" onClick={e => {
               history.push('/admin/user')
             }}>
               Add Admin
 </Button>
 
-          </div>
+          </div> */}
           <div className="col-sm-4">
 
 
@@ -239,15 +268,14 @@ export default function TableList(props) {
       <card grid>
         <table className="table table-bordered table-condensed table-responsive table-m8" style={{ margin: "20px", width: "95%" }} >
           <thead>
-            <tr style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Name</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Mobile</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Email</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Roll</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Gender</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">City</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Status</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Action</th>
+            <tr style={{ textAlign: "center", backgroundColor: 'gray', color: "white", textEmphasisColor: "white" }}>
+              <th style={{ textAlign: "center", backgroundColor: 'gray', color: "white", textEmphasisColor: "white" }} scope="col">Date</th>
+              <th style={{ textAlign: "center", backgroundColor: 'gray', color: "white", textEmphasisColor: "white" }} scope="col">Time</th>
+              <th style={{ textAlign: "center", backgroundColor: 'gray', color: "white", textEmphasisColor: "white" }} scope="col">CustomerVar Mobile</th>
+              <th style={{ textAlign: "center", backgroundColor: 'gray', color: "white", textEmphasisColor: "white" }} scope="col">Dirver Mobile</th>
+              <th style={{ textAlign: "center", backgroundColor: 'gray', color: "white", textEmphasisColor: "white" }} scope="col">Category</th>
+              <th style={{ textAlign: "center", backgroundColor: 'gray', color: "white", textEmphasisColor: "white" }} scope="col">Status</th>
+              <th style={{ textAlign: "center", backgroundColor: 'gray', color: "white", textEmphasisColor: "white" }} scope="col">Action</th>
             </tr>
           </thead>
           <tbody >
@@ -273,3 +301,5 @@ export default function TableList(props) {
   )
 
 }
+
+

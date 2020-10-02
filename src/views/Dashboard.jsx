@@ -1,11 +1,12 @@
- 
-import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
 import { Grid, Row, Col } from "react-bootstrap";
 import Maps from './Maps'
 import { Card } from "components/Card/Card.jsx";
 import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasks } from "components/Tasks/Tasks.jsx";
+import React, { useState,useEffect } from 'react';
+import axios from 'axios';
+
 import {
   dataPie,
   legendPie,
@@ -18,9 +19,15 @@ import {
   responsiveBar,
   legendBar
 } from "variables/Variables.jsx";
+export default function Dashboard(props) {
 
-class Dashboard extends Component {
-  createLegend(json) {
+
+  const [TotalDriver, setTotalDrivers] = useState('')
+  const [OnlineDrivers, setOnlineDrivers] = useState('')
+  const [OfflineDrivers, set_OfflineDrivers] = useState('')
+  const [EngagedDrivers, set_EngagedDrivers] = useState('')
+
+ const createLegend =(json)=> {
     var legend = [];
     for (var i = 0; i < json["names"].length; i++) {
       var type = "fa fa-circle text-" + json["types"][i];
@@ -30,16 +37,46 @@ class Dashboard extends Component {
     }
     return legend;
   }
-  render() {
+
+  let token = localStorage.getItem('x-access-token');
+
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Content-type": "Application/json",
+    "x-access-token": token,
+  }
+  useEffect(() => {
+   
+    axios.get(
+
+      `http://localhost:8080/api/driver`,
+      { headers }
+
+    )
+      .then(response => {
+      
+         setTotalDrivers(response.data.count)
+
+
+
+      })
+
+
+  }
+    , []);
+
+
+
+
     return (
       <div className="content">
         <Grid fluid>
           <Row>
             <Col lg={4} sm={6}>
               <StatsCard
-                bigIcon={<i className="pe-7s-server text-warning" />}
+                bigIcon={<i className="pe-7s-note2 text-warning" />}
                 statsText="Reg Drivers"
-                statsValue="105"
+                statsValue={TotalDriver}
                 statsIcon={<i className="fa fa-refresh" />}
                 statsIconText="Updated now"
               />
@@ -73,7 +110,7 @@ class Dashboard extends Component {
             </Col>
             <Col lg={4} sm={6}>
               <StatsCard
-                bigIcon={<i className="fa fa-twitter text-info" />}
+                bigIcon={<i className="fa pe-7s-less text-info" />}
                 statsText="Blocked Drivers"
                 statsValue="23"
                 statsIcon={<i className="fa fa-refresh" />}
@@ -96,7 +133,7 @@ class Dashboard extends Component {
                 
                }
                 legend={
-                  <div className="legend">{this.createLegend(legendSales)}</div>
+                  <div className="legend">{createLegend(legendSales)}</div>
                 }
               />
             </Col>
@@ -140,7 +177,7 @@ class Dashboard extends Component {
                   </div>
                 }
                 legend={
-                  <div className="legend">{this.createLegend(legendBar)}</div>
+                  <div className="legend">{createLegend(legendBar)}</div>
                 }
               />
             </Col>
@@ -164,7 +201,5 @@ class Dashboard extends Component {
         </Grid>
       </div>
     );
-  }
-}
+              }
 
-export default Dashboard;

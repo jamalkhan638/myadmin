@@ -7,39 +7,73 @@ import Icons from "views/Icons.jsx";
 import Maps from "views/Maps.jsx";
 import Notifications from "views/Notifications.jsx";
 import Upgrade from "views/Upgrade.jsx";
+import customersList from "./views/CustomersList"
+
+import BlockedAdminResult from "views/BlockedAdminResult";
+
+
 
 const dashboardRoutes = [
   {
     path: "/dashboard",
     name: "Dashboard",
     icon: "pe-7s-graph",
-    component: Dashboard,
     layout: "/admin"
   },
   {
+    
     path: "/table",
     name: "Admin",
-    icon: "pe-7s-note2",
-    component: TableList,
+    icon: "pe-7s-add-user",
+  
     layout: "/admin"
   },
-  
-  
   {
-    path: "/user",
+    path: "/tariff",
+    name: "Tariff",
+    icon: "pe-7s-note2",
+    layout: "/admin"
+  },
+  {
+    
+    path: "/vehicles",
+    name: "Vehicles",
+    icon: "pe-7s-car",
+   
+    layout: "/admin"
+  },
+  {
+    
+    path: "/captain",
+    name: "captain",
+    icon: "pe-7s-id",
+   
+    layout: "/admin"
+  },
+
+ 
+  {
+    
+    path: "/customer",
     name: "Customer",
     icon: "pe-7s-user",
-    component: UserProfile,
+   
     layout: "/admin"
   },
-  
+
   {
-    path: "/typography",
-    name: "Typography",
-    icon: "pe-7s-news-paper",
-    component: Typography,
+    path: "/rides",
+    name: "Rides",
+    icon: "pe-7s-car",
     layout: "/admin"
   },
+  {
+    path: "/report",
+    name: "Reports",
+    icon: "pe-7s-news-paper",
+    layout: "/admin"
+  },
+    
   {
     path: "/icons",
     name: "Icons",
@@ -47,21 +81,7 @@ const dashboardRoutes = [
     component: Icons,
     layout: "/admin"
   },
-  {
-    path: "/maps",
-    name: "Maps",
-    icon: "pe-7s-map-marker",
-    component: Maps,
-    layout: "/admin"
-  },
-  {
-    path: "/notifications",
-    name: "Notifications",
-    icon: "pe-7s-bell",
-    component: Notifications,
-    layout: "/admin"
-  },
-
+ 
 ];
 
 export default dashboardRoutes;

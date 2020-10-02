@@ -12,7 +12,7 @@ import { FormatAlignCenter } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Line, Circle } from 'rc-progress';
 
-export default function TableList(props) {
+export default function Captain(props) {
 
 
   //for Pagination
@@ -30,12 +30,12 @@ export default function TableList(props) {
     "x-access-token": token,
   }
 
-  const baseURL = "http://localhost:8080/api/admin";
+  
   useEffect(() => {
     setPageRange(5)
     axios.get(
 
-      `http://localhost:8080/api/admin/?limit=${PageLimit}&page=${activePg}`,
+      `http://localhost:8080/api/driver/?limit=${PageLimit}&page=${activePg}`,
       { headers }
 
     )
@@ -59,7 +59,7 @@ export default function TableList(props) {
   const deleteItemFromState = (id) => {
     console.log(id)
     axios.delete(
-      `http://localhost:8080/api/admin/${id}`,
+      `http://localhost:8080/api/driver/${id}`,
       {
         headers
       }
@@ -75,10 +75,10 @@ export default function TableList(props) {
       );
   }
 
-  const BlockItemFromState = (admin) => {
+  const BlockItemFromState = (driver) => {
     
     axios.patch(
-      `http://localhost:8080/api/admin/block/${admin._id}`,{},
+      `http://localhost:8080/api/driver/block/${driver._id}`,{},
       {
         headers
       }
@@ -104,32 +104,31 @@ export default function TableList(props) {
   const ActiveRenderBody = () => {
 
     if (data != undefined && data != null) {
-      return data.map((admin) => {
+      return data.map((driver) => {
 
         {
 
-          if (admin.isBlocked != true) {
+          if (driver.isBlocked != true) {
 
             return (
 
-              <tr key={admin._id} >
+              <tr key={driver._id} >
 
-                <td>{admin.name}</td>
-                <td>{admin.mobile}</td>
-                <td>{admin.email}</td>
-                <td>{admin.accessLevel}</td>
-                <td>{admin.gender}</td>
-                <td>{admin.city}</td>
+                <td>{driver.name}</td>
+                <td>{driver.mobile}</td>
+                <td>{driver.category}</td>
+                <td>{driver.vehicle}</td>
+                <td>{driver.city}</td>
                 <td>active</td>
                 <td>  <IconButton>
                   <BlockIcon color="primary" onClick={e => {
-                    BlockItemFromState(admin)
+                    BlockItemFromState(driver)
                   }
 
                   } /> </IconButton>
                   <IconButton>
                     <DeleteIcon color="primary" onClick={e => {
-                      deleteItemFromState(admin._id)
+                      deleteItemFromState(driver._id)
                     }
 
                     } />
@@ -160,7 +159,7 @@ export default function TableList(props) {
   const handleSubmit = (evt) => {
     evt.preventDefault();
 
-    axios.get(`http://localhost:8080/api/admin/?search=name&q=` + searchData, { headers })
+    axios.get(`http://localhost:8080/api/driver/?search=name&q=` + searchData, { headers })
       .then(response => {
 
         setData(response.data.data)
@@ -180,7 +179,7 @@ export default function TableList(props) {
     console.log(pageNumber)
     axios.get(
 
-      `http://localhost:8080/api/admin/?limit=${PageLimit}&page=${pageNumber}`,
+      `http://localhost:8080/api/driver/?limit=${PageLimit}&page=${pageNumber}`,
       { headers }
 
     )
@@ -211,7 +210,7 @@ export default function TableList(props) {
 
           <div className="col-sm-8">
             <Button variant="outlined" color="primary" onClick={e => {
-              history.push('/admin/user')
+              history.push('/driver/user')
             }}>
               Add Admin
 </Button>

@@ -12,10 +12,13 @@ import "./assets/css/pe-icon-7-stroke.css";
 import Login from '../src/components/loginForn/Login';
 import AdminLayout from "layouts/Admin.jsx";
 
+
+
 ReactDOM.render(
   <BrowserRouter>
     <Switch>
       <Route path="/admin" render={props => <AdminLayout {...props} />} />
+  
       <Route path="/" render={props => <Login/>} />
     </Switch>
   </BrowserRouter>,

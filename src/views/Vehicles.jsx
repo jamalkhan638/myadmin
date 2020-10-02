@@ -10,9 +10,9 @@ import BlockIcon from '@material-ui/icons/Block';
 import Pagination from "react-js-pagination";
 import { FormatAlignCenter } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { Line, Circle } from 'rc-progress';
 
-export default function TableList(props) {
+
+export default function Vehicles(props) {
 
 
   //for Pagination
@@ -35,13 +35,13 @@ export default function TableList(props) {
     setPageRange(5)
     axios.get(
 
-      `http://localhost:8080/api/admin/?limit=${PageLimit}&page=${activePg}`,
+      `http://localhost:8080/api/vehicle/?limit=${PageLimit}&page=${activePg}`,
       { headers }
 
     )
       .then(response => {
 
-
+console.log(response)
         setPageRange(Math.ceil(response.data.count / PageLimit))
         setTotalItemsCount(response.data.count)
 
@@ -59,7 +59,7 @@ export default function TableList(props) {
   const deleteItemFromState = (id) => {
     console.log(id)
     axios.delete(
-      `http://localhost:8080/api/admin/${id}`,
+      `http://localhost:8080/api/vehicle/${id}`,
       {
         headers
       }
@@ -103,24 +103,20 @@ export default function TableList(props) {
 
   const ActiveRenderBody = () => {
 
-    if (data != undefined && data != null) {
       return data.map((admin) => {
-
         {
-
-          if (admin.isBlocked != true) {
-
-            return (
+   return (
 
               <tr key={admin._id} >
 
                 <td>{admin.name}</td>
-                <td>{admin.mobile}</td>
-                <td>{admin.email}</td>
-                <td>{admin.accessLevel}</td>
-                <td>{admin.gender}</td>
-                <td>{admin.city}</td>
-                <td>active</td>
+                <td>{admin.registration}</td>
+                <td>{admin.make}</td>
+                <td>{admin.category}</td>
+                <td>{admin.color}</td>
+                <td>{admin.year}</td>
+                {admin.isAvailable}
+                <td>{admin.isAvailable?'Available':'Unavailable'}</td>
                 <td>  <IconButton>
                   <BlockIcon color="primary" onClick={e => {
                     BlockItemFromState(admin)
@@ -144,12 +140,11 @@ export default function TableList(props) {
             )
           }
 
-        }
+      });
 
-
-      })
     }
-  }
+    
+  
 
 
 
@@ -160,7 +155,7 @@ export default function TableList(props) {
   const handleSubmit = (evt) => {
     evt.preventDefault();
 
-    axios.get(`http://localhost:8080/api/admin/?search=name&q=` + searchData, { headers })
+    axios.get(`http://localhost:8080/api/vehicle/?search=name&q=` + searchData, { headers })
       .then(response => {
 
         setData(response.data.data)
@@ -180,7 +175,7 @@ export default function TableList(props) {
     console.log(pageNumber)
     axios.get(
 
-      `http://localhost:8080/api/admin/?limit=${PageLimit}&page=${pageNumber}`,
+      `http://localhost:8080/api/vehicle/?limit=${PageLimit}&page=${pageNumber}`,
       { headers }
 
     )
@@ -211,9 +206,9 @@ export default function TableList(props) {
 
           <div className="col-sm-8">
             <Button variant="outlined" color="primary" onClick={e => {
-              history.push('/admin/user')
+              history.push('/admin/addVehicles')
             }}>
-              Add Admin
+              Add Vehicles
 </Button>
 
           </div>
@@ -239,15 +234,15 @@ export default function TableList(props) {
       <card grid>
         <table className="table table-bordered table-condensed table-responsive table-m8" style={{ margin: "20px", width: "95%" }} >
           <thead>
-            <tr style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Name</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Mobile</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Email</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Roll</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Gender</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">City</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Status</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Action</th>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Registration</th>
+              <th scope="col">Make</th>
+              <th scope="col">Category</th>
+              <th scope="col">Color</th>
+              <th scope="col">Year</th>
+              <th scope="col">Avilability</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody >

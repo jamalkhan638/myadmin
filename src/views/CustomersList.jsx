@@ -10,9 +10,9 @@ import BlockIcon from '@material-ui/icons/Block';
 import Pagination from "react-js-pagination";
 import { FormatAlignCenter } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { Line, Circle } from 'rc-progress';
 
-export default function TableList(props) {
+
+export default function CustomerList(props) {
 
 
   //for Pagination
@@ -30,17 +30,16 @@ export default function TableList(props) {
     "x-access-token": token,
   }
 
-  const baseURL = "http://localhost:8080/api/admin";
   useEffect(() => {
     setPageRange(5)
     axios.get(
 
-      `http://localhost:8080/api/admin/?limit=${PageLimit}&page=${activePg}`,
+      `http://localhost:8080/api/customer/?limit=${PageLimit}&page=${activePg}`,
       { headers }
 
     )
       .then(response => {
-
+      console.log(response)
 
         setPageRange(Math.ceil(response.data.count / PageLimit))
         setTotalItemsCount(response.data.count)
@@ -59,7 +58,7 @@ export default function TableList(props) {
   const deleteItemFromState = (id) => {
     console.log(id)
     axios.delete(
-      `http://localhost:8080/api/admin/${id}`,
+      `http://localhost:8080/api/customer/${id}`,
       {
         headers
       }
@@ -75,10 +74,10 @@ export default function TableList(props) {
       );
   }
 
-  const BlockItemFromState = (admin) => {
+  const BlockItemFromState = (customer) => {
     
     axios.patch(
-      `http://localhost:8080/api/admin/block/${admin._id}`,{},
+      `http://localhost:8080/api/customer/block/${customer._id}`,{},
       {
         headers
       }
@@ -102,34 +101,33 @@ export default function TableList(props) {
   }
 
   const ActiveRenderBody = () => {
-
+console.log(data)
     if (data != undefined && data != null) {
-      return data.map((admin) => {
+      return data.map((customer) => {
 
         {
 
-          if (admin.isBlocked != true) {
+          if (customer.isBlocked != true) {
 
             return (
 
-              <tr key={admin._id} >
+              <tr key={customer._id} >
 
-                <td>{admin.name}</td>
-                <td>{admin.mobile}</td>
-                <td>{admin.email}</td>
-                <td>{admin.accessLevel}</td>
-                <td>{admin.gender}</td>
-                <td>{admin.city}</td>
+                <td>{customer.name}</td>
+                <td>{customer.mobile}</td>
+                <td>{customer.email}</td>
+                <td>{customer.gender}</td>
+                <td>{customer.city}</td>
                 <td>active</td>
                 <td>  <IconButton>
                   <BlockIcon color="primary" onClick={e => {
-                    BlockItemFromState(admin)
+                    BlockItemFromState(customer)
                   }
 
                   } /> </IconButton>
                   <IconButton>
                     <DeleteIcon color="primary" onClick={e => {
-                      deleteItemFromState(admin._id)
+                      deleteItemFromState(customer._id)
                     }
 
                     } />
@@ -160,7 +158,7 @@ export default function TableList(props) {
   const handleSubmit = (evt) => {
     evt.preventDefault();
 
-    axios.get(`http://localhost:8080/api/admin/?search=name&q=` + searchData, { headers })
+    axios.get(`http://localhost:8080/api/customer/?search=name&q=` + searchData, { headers })
       .then(response => {
 
         setData(response.data.data)
@@ -180,7 +178,7 @@ export default function TableList(props) {
     console.log(pageNumber)
     axios.get(
 
-      `http://localhost:8080/api/admin/?limit=${PageLimit}&page=${pageNumber}`,
+      `http://localhost:8080/api/customer/?limit=${PageLimit}&page=${pageNumber}`,
       { headers }
 
     )
@@ -209,14 +207,7 @@ export default function TableList(props) {
       <div className="container-fluid">
         <div className="row" style={{ marginLeft: "10px", marginTop: "10px" }}>
 
-          <div className="col-sm-8">
-            <Button variant="outlined" color="primary" onClick={e => {
-              history.push('/admin/user')
-            }}>
-              Add Admin
-</Button>
 
-          </div>
           <div className="col-sm-4">
 
 
@@ -239,15 +230,14 @@ export default function TableList(props) {
       <card grid>
         <table className="table table-bordered table-condensed table-responsive table-m8" style={{ margin: "20px", width: "95%" }} >
           <thead>
-            <tr style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Name</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Mobile</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Email</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Roll</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Gender</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">City</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Status</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Action</th>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Mobile</th>
+              <th scope="col">Email</th>
+              <th scope="col">Gender</th>
+              <th scope="col">City</th>
+              <th scope="col">Status</th>
+              <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody >

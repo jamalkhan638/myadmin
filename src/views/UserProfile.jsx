@@ -81,12 +81,12 @@ export default function UserProfile(props) {
         {
            console.log(response.data)
         alert(response.data.message);
-        history.push('/admin/table')
+        
         }
     else{
       console.log(response.data)
       alert(response.data.message);
-      history.push('/admin/table')
+   
 }
         // if (response.data.token) {
         //   localStorage.setItem("user", JSON.stringify(response.data));

@@ -12,8 +12,28 @@ import { style } from "variables/Variables.jsx";
 
 import routes from "routes.js";
 
-import image from "assets/img/sidebar-3.jpg";
+import Dashboard from "views/Dashboard.jsx";
+import UserProfile from "views/UserProfile.jsx";
+import TableList from "views/TableList.jsx";
+import Tariff from "views/Tariff";
+import AddTariff from "views/AddTariff.jsx"
+import Typography from "views/Typography.jsx";
+import Icons from "views/Icons.jsx";
+import Maps from "views/Maps.jsx";
+import Notifications from "views/Notifications.jsx";
+import Upgrade from "views/Upgrade.jsx";
+import CustomersList from "../views/CustomersList"
+import Vehicles from "../views/Vehicles"
 
+
+
+
+
+import image from "assets/img/sidebar-3.jpg";
+import BlockedAdminResult from "views/BlockedAdminResult"
+import AddVehicles from "views/AddVehicles";
+import Captain from "views/Captain";
+import Rides from "views/Rides";
 class Admin extends Component {
   constructor(props) {
     super(props);
@@ -72,6 +92,7 @@ class Admin extends Component {
             key={key}
           />
         );
+        
       } else {
         return null;
       }
@@ -162,9 +183,119 @@ class Admin extends Component {
         <div id="main-panel" className="main-panel" ref="mainPanel">
           <AdminNavbar
             {...this.props}
-            brandText={this.getBrandText(this.props.location.pathname)}
+            brandText={"admin"}
           />
-          <Switch>{this.getRoutes(routes)}</Switch>
+          <Switch>
+       
+          <Route
+            path='/admin/dashboard'
+            render={props => (
+              <Dashboard
+                handleClick={this.handleNotificationClick}
+              />
+            )}
+           
+          />
+
+<Route
+            path='/admin/tariff'
+            render={props => (
+              <Tariff
+                handleClick={this.handleNotificationClick}
+              />
+            )}
+           
+          />
+            <Route
+            path='/admin/table'
+            render={props => (
+              <TableList
+                handleClick={this.handleNotificationClick}
+              />
+            )}
+           
+          />
+        
+            <Route
+            path='/admin/customer'
+            render={props => (
+              <CustomersList
+                handleClick={this.handleNotificationClick}
+              />
+            )}
+           
+          />
+
+          <Route
+            path='/admin/captain'
+            render={props => (
+              <Captain
+                handleClick={this.handleNotificationClick}
+              />
+            )}
+           
+          />
+            <Route
+            path='/admin/user'
+            render={props => (
+              <UserProfile
+                handleClick={this.handleNotificationClick}
+              />
+            )}
+           
+          />
+                      <Route
+            path='/admin/addTariff'
+            render={props => (
+              <AddTariff
+              />
+            )}
+           
+          />
+            <Route
+            path='/admin/vehicles'
+            render={props => (
+              <Vehicles
+                
+              />
+              
+            )}
+           
+          />
+              <Route
+            path='/admin/addVehicles'
+            render={props => (
+              <AddVehicles
+                
+              />
+              
+            )}
+           
+          />
+            <Route
+            path='/admin/rides'
+            render={props => (
+              <Rides
+                
+              />
+              
+            )}
+           
+          />
+            <Route
+            path='/admin/icons'
+            render={props => (
+              <Icons
+                handleClick={this.handleNotificationClick}
+              />
+              
+            )}
+           
+          />
+           
+
+         
+          </Switch>
           <Footer />
           <FixedPlugin
             handleImageClick={this.handleImageClick}
