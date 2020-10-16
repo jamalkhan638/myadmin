@@ -23,9 +23,10 @@ export default function Dashboard(props) {
 
 
   const [TotalDriver, setTotalDrivers] = useState('')
-  const [OnlineDrivers, setOnlineDrivers] = useState('')
+  const [OnlineDrivers, setOnlineDrivers] = useState(0)
   const [OfflineDrivers, set_OfflineDrivers] = useState('')
   const [EngagedDrivers, set_EngagedDrivers] = useState('')
+  const [BlockedDrivers, set_BlockedDrivers] = useState(0)
 
  const createLegend =(json)=> {
     var legend = [];
@@ -49,13 +50,40 @@ export default function Dashboard(props) {
    
     axios.get(
 
-      `http://localhost:8080/api/driver`,
+      `http://localhost:8080/api/driver/count-stats`,
       { headers }
 
     )
       .then(response => {
-      
-         setTotalDrivers(response.data.count)
+      console.log(response)
+      setTotalDrivers(response.data.totalDrivers)
+      setOnlineDrivers(response.data.onlineDrivers)
+      set_OfflineDrivers(response.data.offlineDrivers)
+      set_EngagedDrivers(response.data.engagedDrivers)
+      set_BlockedDrivers(response.data.blockedDrivers)
+
+        //  setTotalDrivers(response.data.count)
+        //  if(response.data.data.length)
+        //  { 
+          
+        //    for(let i=0;i<response.data.data.length;i++)
+        //    {
+           
+        //      if(response.data.data.socket==null)
+        //      {
+              
+        //            setOnlineDrivers(OnlineDrivers+1)
+
+        //      }
+        //      if(response.data.data.isBlocked==true)
+        //      {
+              
+        //       set_BlockedDrivers(BlockedDrivers+1)
+
+        //      }
+        //    }
+        //  }
+        //  set_OfflineDrivers(TotalDriver-OnlineDrivers)
 
 
 
@@ -85,7 +113,7 @@ export default function Dashboard(props) {
               <StatsCard
                 bigIcon={<i className="pe-7s-server text-warning" />}
                 statsText="Online Drivers"
-                statsValue="105"
+                statsValue={OnlineDrivers}
                 statsIcon={<i className="fa fa-refresh" />}
                 statsIconText="Updated now"
               />
@@ -94,7 +122,7 @@ export default function Dashboard(props) {
               <StatsCard
                 bigIcon={<i className="pe-7s-wallet text-success" />}
                 statsText="Offline Drivers"
-                statsValue="345"
+                statsValue={OfflineDrivers}
                 statsIcon={<i className="fa fa-calendar-o" />}
                 statsIconText="Last day"
               />
@@ -103,7 +131,7 @@ export default function Dashboard(props) {
               <StatsCard
                 bigIcon={<i className="pe-7s-graph1 text-danger" />}
                 statsText="Engaged Drivers"
-                statsValue="23"
+                statsValue={EngagedDrivers}
                 statsIcon={<i className="fa fa-clock-o" />}
                 statsIconText="In the last hour"
               />
@@ -112,7 +140,7 @@ export default function Dashboard(props) {
               <StatsCard
                 bigIcon={<i className="fa pe-7s-less text-info" />}
                 statsText="Blocked Drivers"
-                statsValue="23"
+                statsValue={BlockedDrivers}
                 statsIcon={<i className="fa fa-refresh" />}
                 statsIconText="Updated now"
               />
@@ -123,7 +151,7 @@ export default function Dashboard(props) {
               <Card
                 statsIcon="fa fa-history"
                 id="chartHours"
-                title="Driver Found:0"
+                title={"Driver Found: "+OnlineDrivers}
                 category="24 Hours performance"
                 stats="Updated 3 minutes ago"
                 

@@ -2,7 +2,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter, Route, Switch, HashRouter } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./assets/css/animate.min.css";
@@ -15,12 +15,14 @@ import AdminLayout from "layouts/Admin.jsx";
 
 
 ReactDOM.render(
-  <BrowserRouter>
+  <HashRouter baseUrl="/build">
     <Switch>
       <Route path="/admin" render={props => <AdminLayout {...props} />} />
   
       <Route path="/" render={props => <Login/>} />
     </Switch>
-  </BrowserRouter>,
+  </HashRouter>,
+  
   document.getElementById("root")
 );
+

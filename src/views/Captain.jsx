@@ -11,7 +11,8 @@ import Pagination from "react-js-pagination";
 import { FormatAlignCenter } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Line, Circle } from 'rc-progress';
-
+import EditIcon from '@material-ui/icons/Edit';
+import FaceIcon from '@material-ui/icons/Face';
 export default function Captain(props) {
 
 
@@ -33,27 +34,69 @@ export default function Captain(props) {
   
   useEffect(() => {
     setPageRange(5)
-    axios.get(
+    // axios.get(
 
-      `http://localhost:8080/api/driver/?limit=${PageLimit}&page=${activePg}`,
-      { headers }
+    //   `http://localhost:8080/api/driver/?limit=${PageLimit}&page=${activePg}`,
+    //   { headers }
 
-    )
-      .then(response => {
-
-
-        setPageRange(Math.ceil(response.data.count / PageLimit))
-        setTotalItemsCount(response.data.count)
-
-        setData(response.data.data)
+    // )
+    //   .then(response => {
 
 
+    //     setPageRange(Math.ceil(response.data.count / PageLimit))
+    //     setTotalItemsCount(response.data.count)
 
-      })
+    //     setData(response.data.data)
 
+
+
+    //   })
+      let one = `http://localhost:8080/api/driver/?limit=${PageLimit}&page=${activePg}`;
+      let two = `http://localhost:8080/api/vehicle/`;
+      let three = `http://localhost:8080/api/category/`;
+      const requestOne = axios.get(one, { headers });
+      const requestTwo = axios.get(two, { headers });
+      const requestthree = axios.get(three, { headers });
+
+      axios.all([requestOne, requestTwo,requestthree]).then(
+        axios.spread((...responses) => {
+          const responseOne = responses[0];
+          const responseTwo = responses[1];
+          const responsethree = responses[2];
+ 
+          getAllField(
+            responseOne.data.data,
+            responseTwo.data.data,
+            responsethree.data.data
+          );
+        })
+      );
+  
 
   }
     , []);
+  const getAllField = (driver, vehicle,category) => {
+      console.log(driver);
+      for (let i = 0; i < driver.length; i++) {
+        for (let j = 0; j < vehicle.length; j++) {
+          if (vehicle[j]._id ===driver[i].vehicle) {
+
+            console.log(vehicle[j]._id)
+
+            driver[i].vehicleName = vehicle[j].name;
+
+            for (let l = 0; l < category.length; l++) {
+              if (category[l]._id == vehicle[j].category) {
+                driver[i].categoryName = category[l].name;
+              }
+            }
+          }
+        }
+      
+      }
+  console.log(driver)
+      setData(driver);
+    };
 
 
   const deleteItemFromState = (id) => {
@@ -116,11 +159,11 @@ export default function Captain(props) {
 
                 <td>{driver.name}</td>
                 <td>{driver.mobile}</td>
-                <td>{driver.category}</td>
-                <td>{driver.vehicle}</td>
+                <td>{driver.categoryName}</td>
+                <td>{driver.vehicleName}</td>
                 <td>{driver.city}</td>
                 <td>active</td>
-                <td>  <IconButton>
+                <td style={{textAlign:"center" }}>  <IconButton>
                   <BlockIcon color="primary" onClick={e => {
                     BlockItemFromState(driver)
                   }
@@ -128,6 +171,20 @@ export default function Captain(props) {
                   } /> </IconButton>
                   <IconButton>
                     <DeleteIcon color="primary" onClick={e => {
+                      deleteItemFromState(driver._id)
+                    }
+
+                    } />
+                  </IconButton>
+                  <IconButton>
+                    <EditIcon color="primary" onClick={e => {
+                      deleteItemFromState(driver._id)
+                    }
+
+                    } />
+                  </IconButton>
+                  <IconButton>
+                    <FaceIcon color="primary" onClick={e => {
                       deleteItemFromState(driver._id)
                     }
 
@@ -210,9 +267,9 @@ export default function Captain(props) {
 
           <div className="col-sm-8">
             <Button variant="outlined" color="primary" onClick={e => {
-              history.push('/driver/user')
+              history.push('/admin/addCaptain')
             }}>
-              Add Admin
+              Add Captain
 </Button>
 
           </div>
@@ -241,9 +298,8 @@ export default function Captain(props) {
             <tr style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}>
               <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Name</th>
               <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Mobile</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Email</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Roll</th>
-              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Gender</th>
+              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Category</th>
+              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">vehicle</th>
               <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">City</th>
               <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Status</th>
               <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Action</th>

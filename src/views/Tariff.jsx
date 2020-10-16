@@ -76,32 +76,9 @@ export default function Tariff(props) {
       );
   }
 
-  const EditItemFromState = (category) => {
+  const EditItemFromState = (userID) => {
+   history.push(`/admin/EditTarrif:${userID}`)
     
-    axios.patch(
-      `http://localhost:8080/api/category/${category._id}`,{},
-      {
-        headers
-      }
-
-    )
-    
-      .then(response => {
-
-        
-    console.log(response.data)
-        alert(response.data.message)
-
-
-
-      },
-        (error) => {
-          var status = error.response.status
-          console.log(status)
-        }
-      );
-
-
 
   }
 
@@ -129,7 +106,7 @@ export default function Tariff(props) {
                 
                 <td>  <IconButton>
                 <EditIcon color="primary" onClick={e => {
-                        EditItemFromState(category)
+                        EditItemFromState(category._id)
                       }
 
                     } />

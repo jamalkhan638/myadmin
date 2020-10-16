@@ -24,8 +24,9 @@ import Notifications from "views/Notifications.jsx";
 import Upgrade from "views/Upgrade.jsx";
 import CustomersList from "../views/CustomersList"
 import Vehicles from "../views/Vehicles"
+import Reports from "../views/Reports"
 
-
+import Profile from '../views/profile';
 
 
 
@@ -34,6 +35,10 @@ import BlockedAdminResult from "views/BlockedAdminResult"
 import AddVehicles from "views/AddVehicles";
 import Captain from "views/Captain";
 import Rides from "views/Rides";
+import { Report } from "@material-ui/icons";
+import AddCaptain from "views/AddCaptain";
+import Input from '../views/input';
+import ShowDriver from "views/showDriver";
 class Admin extends Component {
   constructor(props) {
     super(props);
@@ -235,6 +240,16 @@ class Admin extends Component {
             )}
            
           />
+          <Route
+            path='/admin/addCaptain'
+            render={props => (
+              <AddCaptain
+                handleClick={this.handleNotificationClick}
+              />
+            )}
+           
+          />
+
             <Route
             path='/admin/user'
             render={props => (
@@ -247,11 +262,21 @@ class Admin extends Component {
                       <Route
             path='/admin/addTariff'
             render={props => (
-              <AddTariff
+              <AddTariff {...props}
               />
             )}
            
           />
+
+            <Route
+            path='/admin/EditTarrif:id'
+            render={props => (
+              <AddTariff {...props}
+              />
+            )}
+           
+          />
+        
             <Route
             path='/admin/vehicles'
             render={props => (
@@ -273,9 +298,15 @@ class Admin extends Component {
            
           />
             <Route
-            path='/admin/rides'
+            path="/admin/rides"
+            render={(props) => <Rides {...props} />}
+          />
+
+
+            <Route
+            path='/admin/report'
             render={props => (
-              <Rides
+              <Reports
                 
               />
               
@@ -292,6 +323,51 @@ class Admin extends Component {
             )}
            
           />
+          
+          {/* <Route
+            path='/admin/input'
+            render={props => (
+              <Input {...props}
+                handleClick={this.handleNotificationClick}
+              />
+              
+            )}
+           
+          /> */}
+
+           <Route
+            path='/admin/input:id'
+            render={props => (
+              <Input {...props}
+              />
+            )}
+           
+          />
+
+
+
+
+
+
+
+
+           <Route
+            path='/admin/showDriver'
+            render={props => (
+              <ShowDriver {...props}
+              />
+            )}
+           
+          />
+           <Route
+            path='/admin/profile'
+            render={props => (
+              <Profile {...props}
+              />
+            )}
+           
+          />
+
            
 
          

@@ -37,17 +37,11 @@ export default function TableList(props) {
 
       `http://localhost:8080/api/admin/?limit=${PageLimit}&page=${activePg}`,
       { headers }
-
     )
       .then(response => {
-
-
         setPageRange(Math.ceil(response.data.count / PageLimit))
         setTotalItemsCount(response.data.count)
-
         setData(response.data.data)
-
-
 
       })
 

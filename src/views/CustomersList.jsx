@@ -1,265 +1,246 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { Grid, Row, Col, Table } from "react-bootstrap";
-import axios from 'axios';
-import Card from "components/Card/Card.jsx";
-import { thArray, tdArray } from "variables/Variables.jsx";
-import Button from '@material-ui/core/Button'
-import IconButton from '@material-ui/core/IconButton';
+import axios from "axios";
+import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 import { useHistory } from "react-router-dom";
-import BlockIcon from '@material-ui/icons/Block';
-import Pagination from "react-js-pagination";
-import { FormatAlignCenter } from '@material-ui/icons';
-import DeleteIcon from '@material-ui/icons/Delete';
+import BlockIcon from "@material-ui/icons/Block";
+import DeleteIcon from "@material-ui/icons/Delete";
+import Pagination from "reactjs-hooks-pagination";
+import EditIcon from "@material-ui/icons/Edit";
+import SupervisorAccountTwoToneIcon from "@material-ui/icons/SupervisorAccountTwoTone";
+import { withStyles } from "@material-ui/core/styles";
+import Tooltip from "@material-ui/core/Tooltip";
 
+let query = "false";
+const GreenTooltip = withStyles({
+  tooltip: {
+    fontSize: "1em",
+    color: "white",
+    backgroundColor: "blue",
+  },
+})(Tooltip);
+const pageLimit = 4;
 
 export default function CustomerList(props) {
+  const [data, setData] = useState([]);
+  const [status, setStatus] = useState();
+  // const [searchData, setseacrh] = useState("")
+  const [loading, setLoading] = useState(true);
+  const [searchInput, setSearchInput] = useState("");
+  const [activecolor, setactiveColor] = useState();
+  const [blockcolor, setblockColor] = useState();
 
+  const [totalRecords, setTotalRecords] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
 
-  //for Pagination
-  const [totalItemsCount, setTotalItemsCount] = useState();
-  const [activePg, setActivePage] = useState(1);
-  const [pageRange, setPageRange] = useState();
-  const [data, setData] = useState([])
-  const [PageLimit, setPageLimit] = useState(5)
-  const [searchData, setSearchData] = useState("");
+  let token = localStorage.getItem("x-access-token");
 
-  let token = localStorage.getItem('x-access-token');
   const headers = {
     "Access-Control-Allow-Origin": "*",
     "Content-type": "Application/json",
     "x-access-token": token,
-  }
+  };
 
   useEffect(() => {
-    setPageRange(5)
-    axios.get(
-
-      `http://localhost:8080/api/customer/?limit=${PageLimit}&page=${activePg}`,
-      { headers }
-
-    )
-      .then(response => {
-      console.log(response)
-
-        setPageRange(Math.ceil(response.data.count / PageLimit))
-        setTotalItemsCount(response.data.count)
-
-        setData(response.data.data)
-
-
-
-      })
-
-
-  }
-    , []);
-
-
-  const deleteItemFromState = (id) => {
-    console.log(id)
-    axios.delete(
-      `http://localhost:8080/api/customer/${id}`,
-      {
-        headers
-      }
-
-    )
-      .then(response => {
-        alert(response.data.msg)
-      },
-        (error) => {
-          var status = error.response.status
-          console.log(error)
+    // console.log(currentPage)
+    axios
+      .get(`http://localhost:8080/api/customer?isBlocked=${query}`, { headers })
+      .then(
+        (res) => {
+          console.log(res);
+          setData(res.data.data);
+          setTotalRecords(res.data.count);
+          setactiveColor("primary");
         }
+
+        // (error) => {
+        //   var status = error.res.status;
+        //   console.log(error);
+        // }
       );
-  }
+  }, [currentPage]);
 
-  const BlockItemFromState = (customer) => {
-    
-    axios.patch(
-      `http://localhost:8080/api/customer/block/${customer._id}`,{},
-      {
-        headers
-      }
+  const handleQuery = (data) => {
+    axios
+      .get(`http://localhost:8080/api/customer?isBlocked=${data}`, { headers })
+      .then((res) => {
+        console.log(res);
+        setData(res.data.data);
 
-    )
-      .then(response => {
-    
-        alert(response.data.message)
-
-
-
-      },
-        (error) => {
-          var status = error.response.status
-          console.log(status)
+        if (data === "false") {
+          setactiveColor("primary");
+          setblockColor("");
+        } else if (data === "true") {
+          setblockColor("primary");
+          setactiveColor("");
         }
-      );
+      });
+  };
 
-
-
-  }
-
-  const ActiveRenderBody = () => {
-console.log(data)
-    if (data != undefined && data != null) {
-      return data.map((customer) => {
-
-        {
-
-          if (customer.isBlocked != true) {
-
-            return (
-
-              <tr key={customer._id} >
-
-                <td>{customer.name}</td>
-                <td>{customer.mobile}</td>
-                <td>{customer.email}</td>
-                <td>{customer.gender}</td>
-                <td>{customer.city}</td>
-                <td>active</td>
-                <td>  <IconButton>
-                  <BlockIcon color="primary" onClick={e => {
-                    BlockItemFromState(customer)
-                  }
-
-                  } /> </IconButton>
-                  <IconButton>
-                    <DeleteIcon color="primary" onClick={e => {
-                      deleteItemFromState(customer._id)
-                    }
-
-                    } />
-                  </IconButton>
-                </td>
-
-
-
-              </tr>
-
-
-            )
-          }
-
-        }
-
-
+  const handleChange = (val) => {
+    setSearchInput(val);
+    axios
+      .get(`http://localhost:8080/api/customer/?search=name&q=` + searchInput, {
+        headers,
       })
-    }
-  }
+      .then((res) => {
+        setData(res.data.data);
+        setLoading(false);
+      });
+  };
 
+  const handleRemove = (id) => {
+    axios
+      .delete(`http://localhost:8080/api/customer/${id}`, { headers })
+      .then((res) => {
+        console.log(res);
+        console.log(res.data);
 
+        const posts = data.filter((customer) => customer._id !== id);
+        setData(posts);
+      });
+  };
 
+  const handleBlock = (customer) => {
+    // const myUrl  = "http://localhost:8080/api/customer/"
 
-  ////////////////////////////////////////////////
+    axios
+      .patch(
+        `http://localhost:8080/api/customer/block/${customer._id}`,
+        {},
+        { headers }
+      )
+      .then((res) => {
+        console.log(res);
 
-
-  const handleSubmit = (evt) => {
-    evt.preventDefault();
-
-    axios.get(`http://localhost:8080/api/customer/?search=name&q=` + searchData, { headers })
-      .then(response => {
-
-        setData(response.data.data)
-
-
-      })
-
-
-  }
-
-
+        alert(res.data.message);
+      });
+  };
   let history = useHistory();
 
+  const handlePush = (userID) => {
+    history.push("/admin/editCustomer", { params: userID });
+  };
 
+  const renderCustomer = () => {
+    return (
+      data &&
+      data.length > 0 &&
+      data.map((customer) => {
+        return (
+          <tr Key={customer._id}>
+            <td>{customer.name}</td>
+            <td>{customer.mobile}</td>
+            <td>{customer.email}</td>
 
-  const handlePageChange = (pageNumber) => {
-    console.log(pageNumber)
-    axios.get(
+            <td>{customer.accessLevel}</td>
+            <td>{customer.gender}</td>
+            <td>{customer.city}</td>
+            <td>active</td>
+            <td>
+              {" "}
+              <IconButton>
+                <BlockIcon
+                  color="primary"
+                  onClick={() => handleBlock(customer)}
+                />{" "}
+              </IconButton>
+              <IconButton>
+                <DeleteIcon
+                  color="primary"
+                  onClick={() => handleRemove(customer._id)}
+                />
+              </IconButton>
+              <IconButton>
+                <EditIcon
+                  color="primary"
+                  onClick={() => handlePush(customer._id)}
+                />
+              </IconButton>
+              <GreenTooltip title="Profile" arrow>
+                <IconButton>
+                  <SupervisorAccountTwoToneIcon
+                    color="primary"
+                    onClick={() =>
+                      history.push("/admin/profile", { params: customer._id })
+                    }
+                  />
+                </IconButton>
+              </GreenTooltip>
+            </td>
+          </tr>
+        );
+      })
+    );
+  };
 
-      `http://localhost:8080/api/customer/?limit=${PageLimit}&page=${pageNumber}`,
-      { headers }
-
-    )
-      .then(response => {
-
-
-        setData(response.data.data)
-
-
-
-      },
-        (error) => {
-          var status = error.response.status
-          console.log(error)
-        }
-      );
-
-    console.log(`active page is ${pageNumber}`);
-    setActivePage(pageNumber)
-
-  }
+  console.log(data);
 
   return (
-
-    <div  >
+    <div>
       <div className="container-fluid">
         <div className="row" style={{ marginLeft: "10px", marginTop: "10px" }}>
+          <div className="col-sm-8">
+            <Button
+              disabled={false}
+              variant="contained"
+              size="medium"
+              onClick={(e) => handleQuery("false")}
+              color={activecolor}
+            >
+              Active
+            </Button>
 
-
+            <Button
+              variant="contained"
+              color={blockcolor}
+              onClick={(e) => handleQuery("true")}
+            >
+              Block
+            </Button>
+          </div>
           <div className="col-sm-4">
-
-
-            <span>
-
-
-              <form onSubmit={handleSubmit} >
-                <input className="form-control-borderless" type="search" placeholder="Search " value={searchData} onChange={e => setSearchData(e.target.value)} />
-
-                <button className="btn btn-sm btn-success" type="submit">Search</button>
-
-              </form>
-            </span>
-
+            <div>
+              <label>Search</label>
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => handleChange(e.target.value)}
+              />
+            </div>
           </div>
         </div>
-
-
       </div>
+
       <card grid>
-        <table className="table table-bordered table-condensed table-responsive table-m8" style={{ margin: "20px", width: "95%" }} >
+        <table
+          className="table table-bordered table-condensed table-responsive table-m8"
+          style={{ margin: "20px", width: "95%" }}
+        >
           <thead>
             <tr>
               <th scope="col">Name</th>
               <th scope="col">Mobile</th>
               <th scope="col">Email</th>
+              <th scope="col">Roll</th>
               <th scope="col">Gender</th>
               <th scope="col">City</th>
               <th scope="col">Status</th>
               <th scope="col">Action</th>
             </tr>
           </thead>
-          <tbody >
-            {
-              ActiveRenderBody()
-            }
-
-
-          </tbody>
+          <tbody>{renderCustomer()}</tbody>
         </table>
       </card>
-      <div style={{ marginLeft: "20px" }}>
+      {/* <div className="d-flex flex-row py-4 justify-content-end">
         <Pagination
-          activePage={activePg}
-          itemsCountPerPage={PageLimit}
-          //Total record display on
-          totalItemsCount={totalItemsCount}
-          pageRangeDisplayed={pageRange}
-          onChange={handlePageChange}
+          totalRecords={totalRecords}
+          pageLimit={pageLimit}
+          pageRangeDisplayed={1}
+          onChangePage={setCurrentPage}
         />
-      </div>
+      </div> */}
     </div>
-  )
-
+  );
 }

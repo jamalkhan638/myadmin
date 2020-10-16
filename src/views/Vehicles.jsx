@@ -33,27 +33,58 @@ export default function Vehicles(props) {
   const baseURL = "http://localhost:8080/api/admin";
   useEffect(() => {
     setPageRange(5)
-    axios.get(
+//     axios.get(
 
-      `http://localhost:8080/api/vehicle/?limit=${PageLimit}&page=${activePg}`,
-      { headers }
+//       `http://localhost:8080/api/vehicle/?limit=${PageLimit}&page=${activePg}`,
+//       { headers }
 
-    )
-      .then(response => {
+//     )
+//       .then(response => {
 
-console.log(response)
-        setPageRange(Math.ceil(response.data.count / PageLimit))
-        setTotalItemsCount(response.data.count)
+// console.log(response)
+//         setPageRange(Math.ceil(response.data.count / PageLimit))
+//         setTotalItemsCount(response.data.count)
 
-        setData(response.data.data)
-
-
-
-      })
+//         setData(response.data.data)
 
 
+
+//       })
+
+      let one = `http://localhost:8080/api/vehicle/?limit=${PageLimit}&page=${activePg}`;
+      let two = `http://localhost:8080/api/category/`;
+      const requestOne = axios.get(one, { headers });
+      const requestTwo = axios.get(two, { headers });
+
+      axios.all([requestOne, requestTwo]).then(
+        axios.spread((...responses) => {
+          const responseOne = responses[0];
+          const responseTwo = responses[1];
+ 
+          getAllField(
+            responseOne.data.data,
+            responseTwo.data.data,
+
+          );
+        })
+      );
   }
     , []);
+
+
+    const getAllField = (vehicle, category) => {
+      console.log(category);
+      for (let i = 0; i < vehicle.length; i++) {
+        for (let j = 0; j < category.length; j++) {
+          if (category[j]._id == vehicle[i].category) {
+            vehicle[i].categoryName = category[j].name;
+          }
+        }
+      
+      }
+  
+      setData(vehicle);
+    };
 
 
   const deleteItemFromState = (id) => {
@@ -112,7 +143,7 @@ console.log(response)
                 <td>{admin.name}</td>
                 <td>{admin.registration}</td>
                 <td>{admin.make}</td>
-                <td>{admin.category}</td>
+                <td>{admin.categoryName}</td>
                 <td>{admin.color}</td>
                 <td>{admin.year}</td>
                 {admin.isAvailable}
