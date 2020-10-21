@@ -8,7 +8,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import ChartistGraph from "react-chartist";
-import {  Row, Col } from "react-bootstrap";
+import {Grid,  Row, Col } from "react-bootstrap";
 import Maps from "./Maps";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
@@ -20,11 +20,42 @@ import AirportShuttleTwoToneIcon from "@material-ui/icons/AirportShuttleTwoTone"
 import AssessmentTwoToneIcon from "@material-ui/icons/AssessmentTwoTone";
 import StarRatings from 'react-star-ratings';
 import Avatar from 'react-avatar';
-import { SentimentVerySatisfiedSharp } from "@material-ui/icons";
+import FormGroup from '@material-ui/core/FormGroup';
+import Switch from '@material-ui/core/Switch';
+import TextField from '@material-ui/core/TextField';
+import Paper from '@material-ui/core/Paper';
+import Collapse from '@material-ui/core/Collapse';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 var Line = require('rc-progress').Line;
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    height: 180,
+  },
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  textField: {
+    marginLeft: theme.spacing(1.5),
+    marginRight: theme.spacing(1.5),
+    width: 120,
+  },
+  container: {
+    display: 'flex',
+  },
+  paper: {
+    margin: theme.spacing(1),
+  },
 
+ 
+}));
 export default function CaptainProfile(props) {
+  const [selectedDate1, setSelectedDate1] = React.useState(new Date());
+  const [selectedDate2, setSelectedDate2] = React.useState(new Date());
+
+  const classes = useStyles();
+  const [checked, setChecked] = React.useState(false);
   const [data, setData] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -45,6 +76,12 @@ export default function CaptainProfile(props) {
   const [closing,setClosing]=useState("0")
   const [onlineTime,setOnlineTime]=useState("0")
   const [totalDistance,setTotalDistance]=useState("0")
+
+
+
+
+
+
   let token = localStorage.getItem("x-access-token");
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -77,28 +114,11 @@ export default function CaptainProfile(props) {
       });
   }, []);
 
-  // useEffect(() => {
-  //   axios
-  //     .get(`http://localhost:8080/api/ride/?driver=${str}`, { headers })
-  //     .then((res) => {
-      
-  //       res.data === "" ? setRide("0") : setRide(res.data.count);
-  //     });
-  // }, []);
+  const handleChange = () => {
+    setChecked((prev) => !prev);
+  };
 
-  // useEffect(() => {
-  //   axios
-  //     .get(`http://localhost:8080/api/complaint?driver=${str}`, {
-  //       headers,
-  //     })
-  //     .then((res) => {
-        
-  //       res.data === "" ? setReport("0") : setReport(res.data.count);
-  //     });
-  // }, []);
-
-
-
+ 
   const showRide =(userid)=>{
     console.log(userid)
     history.push(`/admin/captainRide:${userid}`)
@@ -144,6 +164,24 @@ export default function CaptainProfile(props) {
       });
   }, []);
 
+ const handleDate=()=>{
+
+  axios
+      .get(`http://localhost:8080/api/driver//get-stats/${str}+ `, {
+        headers,
+      })
+      .then((res) => {
+        console.log(res);
+   
+       
+      });
+
+ }
+
+
+
+
+
 
 
   const history = useHistory();
@@ -167,7 +205,7 @@ export default function CaptainProfile(props) {
               <div>
                 <Col md= {4}>
                 <span>
-                <Avatar     facebookId = {id} size="150"  round={true} />
+                <Avatar    src ={`https://malta-images.s3.amazonaws.com/${pic}`} size="150"  round={true} />
                 </span>
                 </Col>
           <Row>
@@ -260,10 +298,78 @@ export default function CaptainProfile(props) {
           
             </Card>
            
+
+
           <Card
-            title="Statistic"
+           
+   title = "Statistics"
+
+
             content={
-              <div style={{}}>
+              <div>
+              <div >
+              <FormControlLabel
+                control={<Switch checked={checked} onChange={handleChange} />}
+                label="Apply Filters"
+              />
+
+              <div className={classes.container}>
+                <Collapse in={checked}>
+                  <Paper elevation={4} className={classes.paper}>
+    
+                  <form className={classes.container} noValidate >
+            
+                    <TextField
+          id="date"
+          label="From"
+          type="date"
+          value={selectedDate1}
+          onChange={(e) => setSelectedDate1(e.target.value)}
+         defaultValue="2017-05-24"
+        className={classes.textField}
+        InputLabelProps={{
+          shrink: true,
+        }}
+      />
+       <TextField
+        id="date"
+        label="To"
+        type="date"
+        value ={selectedDate2}
+        onChange={(e) => setSelectedDate2(e.target.value)}
+        defaultValue="2017-05-24"
+        className={classes.textField}
+        InputLabelProps={{
+          shrink: true,
+        }}
+      />
+                   
+                 
+
+
+    </form>
+
+                  </Paper>
+          
+                  <Button
+            type ="submit"
+            disabled={false}
+            color="primary"
+            variant="contained"
+            size="small"
+            onClick ={()=>{handleDate()}}
+          >
+            Submit
+          </Button>
+                
+                </Collapse>
+                </div>
+           
+                </div>
+
+
+              <div 
+              >
                 {/* <b
                   style={{
                     color: "#1273DE",
@@ -289,6 +395,7 @@ export default function CaptainProfile(props) {
                 <b style={{ color: "#1273DE", fontSize: 15 }}>Closing Balance:</b>
                 <p>{closing} PKR</p>
               </div>
+             </div>
             }
           />
         </Col>
