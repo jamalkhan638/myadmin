@@ -119,8 +119,8 @@ export default function CustomerList(props) {
   };
   let history = useHistory();
 
-  const handlePush = (userID) => {
-    history.push("/admin/editCustomer", { params: userID });
+  const handlePush = (userid) => {
+    history.push(`/admin/editCustomer:${userid}`);
   };
 
   const renderCustomer = () => {
@@ -163,7 +163,7 @@ export default function CustomerList(props) {
                   <SupervisorAccountTwoToneIcon
                     color="primary"
                     onClick={() =>
-                      history.push("/admin/profile", { params: customer._id })
+                      history.push(`/admin/profile:${customer._id}`)
                     }
                   />
                 </IconButton>

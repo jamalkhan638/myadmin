@@ -12,17 +12,24 @@ import { FormatAlignCenter, CategoryOutlined } from "@material-ui/icons";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { Line, Circle } from "rc-progress";
 import TrackChangesTwoToneIcon from '@material-ui/icons/TrackChangesTwoTone';
+
+
+const pageLimit = 4;
 export default function Rides(props) {
   //for Pagination
-  const [totalItemsCount, setTotalItemsCount] = useState();
-  const [activePg, setActivePage] = useState(1);
+  
+  // const [activePg, setActivePage] = useState(1);
   const [pageRange, setPageRange] = useState();
   const [data, setData] = useState([]);
-
-  const [PageLimit, setPageLimit] = useState(5);
+  const [searchInput, setSearchInput] = useState("");
+  // const [PageLimit, setPageLimit] = useState(5);
   const [searchData, setSearchData] = useState("");
   const [customerVar, setCustomerVar] = useState([]);
-
+  const [totalRecords, setTotalRecords] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activePg, setActivePage] = useState(1);
+  const [PageLimit, setPageLimit] = useState(5)
+  const [totalItemsCount, setTotalItemsCount] = useState();
   let token = localStorage.getItem("x-access-token");
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -32,8 +39,9 @@ export default function Rides(props) {
 
   const baseURL = "http://localhost:8080/api/admin";
   useEffect(() => {
-    setPageRange(5);
-    let one = `http://localhost:8080/api/ride`;
+    setPageRange(5)
+  
+    let one = `http://localhost:8080/api/ride/?limit=${PageLimit}&page=${activePg}`;
     let two = `http://localhost:8080/api/customer/`;
     let three = `http://localhost:8080/api/driver/`;
     let four = `http://localhost:8080/api/category/`;
@@ -49,15 +57,27 @@ export default function Rides(props) {
         const responseTwo = responses[1];
         const responseThree = responses[2];
         const responseFour = responses[3];
+        setTotalRecords(responseOne.data.count);
+        setPageRange(Math.ceil(responseOne.data.count / PageLimit))
+        setTotalItemsCount(responseOne.data.count)
         console.log(responseFour);
         CustomerMobileField(
           responseOne.data.data,
           responseTwo.data.data,
           responseThree.data.data,
           responseFour.data.data
+         
         );
+        console.log(responseOne)
+        console.log(responseTwo)
+        console.log(responseThree)
+        console.log(responseFour)
+        
       })
+     
     );
+ 
+ 
   }, []);
 
   const CustomerMobileField = (ride, customer, driver, category) => {
@@ -81,6 +101,8 @@ export default function Rides(props) {
     }
 
     setCustomerVar(ride);
+    console.log(ride)
+  
   };
 
   let history = useHistory();
@@ -144,25 +166,25 @@ export default function Rides(props) {
 
   
 
-  const handlePageChange = (pageNumber) => {
-    axios
-      .get(
-        `http://localhost:8080/api/admin/?limit=${PageLimit}&page=${pageNumber}`,
-        { headers }
-      )
-      .then(
-        (response) => {
-          setData(response.data.data);
-        },
-        (error) => {
-          var status = error.response.status;
-          console.log(error);
-        }
-      );
+  // const handlePageChange = (pageNumber) => {
+  //   axios
+  //     .get(
+  //       `http://localhost:8080/api/admin/?limit=${PageLimit}&page=${pageNumber}`,
+  //       { headers }
+  //     )
+  //     .then(
+  //       (response) => {
+  //         setData(response.data.data);
+  //       },
+  //       (error) => {
+  //         var status = error.response.status;
+  //         console.log(error);
+  //       }
+  //     );
 
-    console.log(`active page is ${pageNumber}`);
-    setActivePage(pageNumber);
-  };
+  //   console.log(`active page is ${pageNumber}`);
+  //   setActivePage(pageNumber);
+  // };
 
   return (
     <div>
@@ -297,8 +319,17 @@ export default function Rides(props) {
           //Total record display on
           totalItemsCount={totalItemsCount}
           pageRangeDisplayed={pageRange}
-          onChange={handlePageChange}
+          onChange={setCurrentPage}
         />
+      
+          {/* <div className="d-flex flex-row py-4 justify-content-end">
+        <Pagination
+          totalRecords={totalRecords}
+          pageLimit={pageLimit}
+          pageRangeDisplayed={1}
+          onChangePage={setCurrentPage}
+        />
+      </div> */}
       </div>
     </div>
   );

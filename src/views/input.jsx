@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Row, Col, Table } from "react-bootstrap";
+import {  Row, Col, Table } from "react-bootstrap";
 import axios from "axios";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -19,6 +19,11 @@ import { Card } from "components/Card/Card.jsx";
 import AirportShuttleIcon from '@material-ui/icons/AirportShuttle';
 import Alert from '@material-ui/lab/Alert';
 
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid'
+
+
+
 
 const GreenTooltip = withStyles({
   tooltip: {
@@ -29,11 +34,19 @@ const GreenTooltip = withStyles({
 })(Tooltip);
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  roots: {
     width: '100%',
     '& > * + *': {
       marginTop: theme.spacing(2),
     },
+    root: {
+      flexGrow: 1,
+    },
+    paper: {
+      padding: theme.spacing(2),
+      textAlign: 'center',
+      color: theme.palette.text.secondary,
+    }
   },
 
 
@@ -66,11 +79,13 @@ export default function Input(props){
     const [mobile,setMobile]=useState()
     const [gender,setGender]=useState()
     const [searchInput, setSearchInput]=useState()
+    const [oncolor,setOnColor]=useState()
+    const [ofcolor,setOfColor]=useState()
     const [alert,setAlert]=useState()
     const [autoClose,setAutoClose]=useState(false)
     let token = localStorage.getItem('x-access-token');
 
-let query='false';
+let query=false;
     const headers = {
         "Access-Control-Allow-Origin": "*",
         "Content-type": "Application/json",
@@ -84,34 +99,47 @@ let query='false';
       useEffect(() => {
         // console.log(currentPage)
         axios
-          .get(`http://localhost:8080/api/driver?isBlocked=${query}`, { headers })
+          .get(`http://localhost:8080/api/driver//check-online?socket=${query}`, { headers })
           .then(
             (res) => {
               console.log(res);
-              setData(res.data.data);
+              setData(res.data.checkOnlineDrivers);
               
-              // console.log(res.data.data[0].socket )
-              // for( let i=0;i<res.data.data.length;i++){
-              //   if ( res.data.data[i].socket === null)
-              //   {
-              //       setOffData(res.data.data)
-                    
-              //   }
-              //   else {
-              //       setOnData(res.data.data)
-                    
-              //   }
-              // }
-            
-            
+       console.log(data)
+              setOfColor("primary")
             }
-    
-         
+          
           );
       }, []);
 
-      console.log(offData)
-      console.log(onData)
+   const handleQuery=(data)=>{
+     axios
+    .get(`http://localhost:8080/api/driver//check-online?socket=${data}`, { headers })
+    .then(
+      (res) => {
+        console.log(res);
+        setData(res.data.checkOnlineDrivers);
+        
+     console.log(data)
+     if(data=== false){
+      setOfColor("primary")
+      setOnColor("")
+    }
+    else if(data===true){
+      setOnColor("primary")
+      setOfColor("")
+    }
+        
+      }
+    
+    );
+      
+
+   }
+  
+  
+
+
 // console.log(str)
 //     const handleCancel =()=>{
 //         axios.patch(`http://localhost:8080/api/ride/cancelDriver/${str}`,{},{headers})
@@ -156,9 +184,7 @@ const handleSearch=(val)=>{
       
 
     };
-    console.log(name)
-    console.log(email)
-    console.log(mobile)
+    
   
     const handleClose = () => {
       setOpen(false);
@@ -175,7 +201,7 @@ const handleSearch=(val)=>{
                 <td>{driver.mobile}</td>
                 <td>{driver.email}</td>
     
-                <td>{driver.accessLevel}</td>
+           
                 <td>{driver.gender}</td>
                 <td>{driver.city}</td>
                 <td>active</td>
@@ -206,22 +232,7 @@ const handleSearch=(val)=>{
 
     return(
         <div>
-             <div className="col-sm-8">
-            <TextField className="inputFields"  required id="standard-required" label="input id" value={id} onChange={e => setId(e.target.value)} />
-            
-            <Button variant="outlined" color="primary" 
-            // onClick= {()=> handleCancel()}
-            >
-              cancel driver
-</Button>
-
-
-<Button variant="outlined" color="primary" 
-//   onClick= {()=> handleAssign()}
-            >
-              assign ride
-</Button>
-</div>
+     
 
 <div>
       <div className="container-fluid">
@@ -231,18 +242,18 @@ const handleSearch=(val)=>{
               disabled={false}
               variant="contained"
               size="medium"
-            //   onClick={(e) => handleQuery("false")}
-            //   color={activecolor}
+              onClick={(e) => handleQuery(false)}
+              color={ofcolor}
             >
-              Active
+              Offline
             </Button>
 
             <Button
               variant="contained"
-            //   color={blockcolor}
-            //   onClick={(e) => handleQuery("true")}
+              color={oncolor}
+              onClick={(e) => handleQuery(true)}
             >
-              Block
+              Online
             </Button>
           </div>
           <div className="col-sm-4">
@@ -265,14 +276,63 @@ const handleSearch=(val)=>{
         >
           <thead>
             <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Mobile</th>
-              <th scope="col">Email</th>
-              <th scope="col">Roll</th>
-              <th scope="col">Gender</th>
-              <th scope="col">City</th>
-              <th scope="col">Status</th>
-              <th scope="col">Action</th>
+              <th scope="col"
+                style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }}
+                scope="col">Name</th>
+              <th scope="col"
+                style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }}
+                scope="col">Mobile</th>
+              <th scope="col"
+                style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }}
+                scope="col">Email</th>
+             
+              <th scope="col"
+                style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }}
+                scope="col">Gender</th>
+              <th scope="col"
+                style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }}
+                scope="col">City</th>
+              <th scope="col"
+                style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }}
+                scope="col">Status</th>
+              <th scope="col"
+                style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }}
+                scope="col">Action</th>
             </tr>
           </thead>
           <tbody>{renderCustomer()}</tbody>
@@ -305,8 +365,28 @@ const handleSearch=(val)=>{
         }}
       >
         <Fade in={open}>
+    
           <div className={classes.paper}>
-            <h2 id="transition-modal-title">Driver_Profile</h2>
+          
+          <div className={classes.root}>
+      <Grid container spacing={3}>
+        <Grid item xs={6}>
+          <Paper >Driver</Paper>
+        </Grid>
+       
+        </Grid>
+        </div>
+
+            {/* <Row>
+              <Col md={6}>
+              <h2 id="transition-modal-title">Driver_Profile</h2>
+              </Col>
+              <Col md={6}>
+                <h2>jamal</h2>
+              </Col>
+            </Row> */}
+         
+          
             <Row>
             <Col md={6}>
         
@@ -327,6 +407,7 @@ const handleSearch=(val)=>{
               </div>
         </Col>
         <Col md={6}>
+       
         <b style={{ color: "#1273DE", fontSize: 18 }}>Contact No:</b>
                 <p> {mobile} </p>
                 <b style={{ color: "#1273DE", fontSize: 18 }}>Gender:</b>

@@ -27,6 +27,7 @@ import Vehicles from "../views/Vehicles"
 import Reports from "../views/Reports"
 
 import Profile from '../views/profile';
+import CaptainProfile from '../views/captainProfile'
 
 
 
@@ -39,6 +40,11 @@ import { Report } from "@material-ui/icons";
 import AddCaptain from "views/AddCaptain";
 import Input from '../views/input';
 import ShowDriver from "views/showDriver";
+import CaptainRide from "views/captainRide";
+import CustomerRide from '../views/customerRide';
+import EditCustomer from '../views/editCustomer'
+import CustomerReport from "views/customerReport";
+import CaptainReport from '../views/captainReport'
 class Admin extends Component {
   constructor(props) {
     super(props);
@@ -360,16 +366,63 @@ class Admin extends Component {
            
           />
            <Route
-            path='/admin/profile'
+            path='/admin/profile:id'
             render={props => (
               <Profile {...props}
               />
             )}
            
           />
-
+            <Route
+            path='/admin/captainProfile:id'
+            render={props => (
+              <CaptainProfile {...props}
+              />
+            )}
            
+          />
+     <Route
+            path='/admin/captainRide:id'
+            render={props => (
+              <CaptainRide {...props}
+              />
+            )}
+           
+          />
+            <Route
+            path='/admin/customerRide:id'
+            render={props => (
+              <CustomerRide {...props}
+              />
+            )}
+           
+          />
+  <Route
+            path='/admin/editCustomer:id'
+            render={props => (
+              <EditCustomer {...props}
+              />
+            )}
+           
+          />
 
+<Route
+            path='/admin/customerReport:id'
+            render={props => (
+              <CustomerReport {...props}
+              />
+            )}
+           
+          />
+
+<Route
+            path='/admin/captainReport:id'
+            render={props => (
+              <CaptainReport {...props}
+              />
+            )}
+           
+          />
          
           </Switch>
           <Footer />

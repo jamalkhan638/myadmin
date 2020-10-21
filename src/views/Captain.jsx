@@ -13,6 +13,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { Line, Circle } from 'rc-progress';
 import EditIcon from '@material-ui/icons/Edit';
 import FaceIcon from '@material-ui/icons/Face';
+
 export default function Captain(props) {
 
 
@@ -23,6 +24,7 @@ export default function Captain(props) {
   const [data, setData] = useState([])
   const [PageLimit, setPageLimit] = useState(5)
   const [searchData, setSearchData] = useState("");
+
 
   let token = localStorage.getItem('x-access-token');
   const headers = {
@@ -99,6 +101,19 @@ export default function Captain(props) {
     };
 
 
+
+    const inputState =(userid)=>{
+      console.log(userid)
+      history.push(`/admin/captainProfile:${userid}`)
+      
+    };
+   
+ 
+
+
+
+
+
   const deleteItemFromState = (id) => {
     console.log(id)
     axios.delete(
@@ -146,7 +161,7 @@ export default function Captain(props) {
 
   const ActiveRenderBody = () => {
 
-    if (data != undefined && data != null) {
+    if ( data != null) {
       return data.map((driver) => {
 
         {
@@ -177,15 +192,15 @@ export default function Captain(props) {
                     } />
                   </IconButton>
                   <IconButton>
-                    <EditIcon color="primary" onClick={e => {
-                      deleteItemFromState(driver._id)
-                    }
+                    <EditIcon color="primary"
+                    //  onClick={e => {
+                    //   deleteItemFromState(driver._id)
+                    // }
 
-                    } />
+                     />
                   </IconButton>
                   <IconButton>
-                    <FaceIcon color="primary" onClick={e => {
-                      deleteItemFromState(driver._id)
+                    <FaceIcon color="primary" onClick={e => { inputState(driver._id)
                     }
 
                     } />
