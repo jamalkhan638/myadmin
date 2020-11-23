@@ -13,7 +13,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
-
+import Loader from 'react-loader-spinner'
 const useStyles = makeStyles((theme) => ({
   modal: {
     display: "flex",
@@ -78,6 +78,8 @@ export default function CaptainReport(props) {
   };
 
   return (
+    <div>
+    { data > 0? 
     <div>
       <div className="container-fluid">
         <div className="row" style={{ marginLeft: "10px", marginTop: "10px" }}>
@@ -168,5 +170,20 @@ export default function CaptainReport(props) {
         </Fade>
       </Modal>
     </div>
+:     <div style={{marginLeft : 450, marginTop: 80, marginBottom: 50}}>  <Loader
+type="Puff"
+color="grey"
+height={100}
+align = "centre"
+width={100}
+margin ="500px"
+timeout={3000}
+visible={true} //3 secs
+
+/>
+
+</div> 
+ }
+</div>
   );
 }

@@ -12,9 +12,10 @@ import { FormatAlignCenter, CategoryOutlined } from "@material-ui/icons";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { Line, Circle } from "rc-progress";
 import TrackChangesTwoToneIcon from '@material-ui/icons/TrackChangesTwoTone';
+import {  toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import ReactTooltip from 'react-tooltip';
 
-
-const pageLimit = 4;
 export default function Rides(props) {
   //for Pagination
   
@@ -28,7 +29,7 @@ export default function Rides(props) {
   const [totalRecords, setTotalRecords] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [activePg, setActivePage] = useState(1);
-  const [PageLimit, setPageLimit] = useState(5)
+  const [PageLimit, setPageLimit] = useState(50)
   const [totalItemsCount, setTotalItemsCount] = useState();
   let token = localStorage.getItem("x-access-token");
   const headers = {
@@ -41,7 +42,7 @@ export default function Rides(props) {
   useEffect(() => {
     setPageRange(5)
   
-    let one = `http://localhost:8080/api/ride/?limit=${PageLimit}&page=${activePg}`;
+    let one = `http://localhost:8080/api/ride/?limit=${PageLimit}&page=${currentPage}`;
     let two = `http://localhost:8080/api/customer/`;
     let three = `http://localhost:8080/api/driver/`;
     let four = `http://localhost:8080/api/category/`;
@@ -78,7 +79,7 @@ export default function Rides(props) {
     );
  
  
-  }, []);
+  }, [currentPage]);
 
   const CustomerMobileField = (ride, customer, driver, category) => {
     console.log(category);
@@ -107,10 +108,10 @@ export default function Rides(props) {
 
   let history = useHistory();
 
-  const inputState =(userid, userid2)=>{
+  const inputState =(userid)=>{
     console.log(userid)
-    console.log(userid2)
-    history.push(`/admin/input:${userid},${userid2}`)
+ 
+    history.push(`/admin/input:${userid}`)
     
   };
   
@@ -123,22 +124,32 @@ export default function Rides(props) {
           <tr key={admin._id}>
             <td>{new Date(admin.createdAt).toLocaleDateString()}</td>
             <td>{new Date(admin.createdAt).toLocaleTimeString()}</td>
-            <td>{admin.customerMobile}</td>
-            <td>{admin.driverMobile}</td>
+        <td>{ (admin.customerMobile )? <td>{admin.customerMobile}</td>: <td>N/A</td>} </td>
+
+            <td>{ (admin.driverMobile) ? <td>{admin.driverMobile}</td>: <td>N/A</td>}</td>
             <td>{admin.categoryName}</td>
-            <td>{admin.status}</td>
+            <td>
+              {admin.status=== "accepted" ? <td style ={{color :"green"}}>{admin.status}</td>: 
+            admin.status=== "notAssigned" ? <td style= {{ color :" red"}}>{admin.status}</td> : 
+            <td style= {{color :"blue"}}>{admin.status}</td> } 
+            </td>
             <td>
               {" "}
+             
               <IconButton>
-                <BlockIcon color="primary" />{" "}
+                <ReactTooltip id = "delete" effect ="solid"  backgroundColor ="red" />
+                <DeleteIcon color="primary" 
+                data-tip ="Delete"
+                data-for= "delete"
+                onClick ={()=>handleDelete(admin._id)} />
               </IconButton>
               <IconButton>
-                <DeleteIcon color="primary" />
-              </IconButton>
-              <IconButton>
-              <TrackChangesTwoToneIcon color ="primary" 
+              <ReactTooltip id = "assign" effect ="solid" backgroundColor ="green" />
+              <TrackChangesTwoToneIcon color ="primary"
+              data-tip = " Show Driver And Assign Ride" 
+              data-for = "assign"
                onClick={e => {
-                      inputState(admin._id,admin.customer)
+                      inputState(admin._id)
                       }}/>
               
               </IconButton>
@@ -164,7 +175,15 @@ export default function Rides(props) {
       });
   };
 
-  
+  const handleDelete = (id)=>{
+    axios.delete(`http://localhost:8080/api/ride/${id}`, {headers})
+   .then((res)=>{
+    console.log(res) 
+    const posts = data.filter((customer) => customer._id !== id);
+    setData(posts);
+    notifyDelete();
+   })
+  }
 
   // const handlePageChange = (pageNumber) => {
   //   axios
@@ -185,6 +204,19 @@ export default function Rides(props) {
   //   console.log(`active page is ${pageNumber}`);
   //   setActivePage(pageNumber);
   // };
+
+  const notifyDelete = ()=>{
+    toast.error('Ride deleted Successfully', {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      });
+  }
+
 
   return (
     <div>
@@ -314,7 +346,7 @@ export default function Rides(props) {
       </card>
       <div style={{ marginLeft: "20px" }}>
         <Pagination
-          activePage={activePg}
+          activePage={currentPage}
           itemsCountPerPage={PageLimit}
           //Total record display on
           totalItemsCount={totalItemsCount}

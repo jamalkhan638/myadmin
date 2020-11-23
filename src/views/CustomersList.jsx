@@ -10,16 +10,12 @@ import Pagination from "reactjs-hooks-pagination";
 import EditIcon from "@material-ui/icons/Edit";
 import SupervisorAccountTwoToneIcon from "@material-ui/icons/SupervisorAccountTwoTone";
 import { withStyles } from "@material-ui/core/styles";
-import Tooltip from "@material-ui/core/Tooltip";
-
+import ReactTooltip from 'react-tooltip';
+import {  toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 let query = "false";
-const GreenTooltip = withStyles({
-  tooltip: {
-    fontSize: "1em",
-    color: "white",
-    backgroundColor: "blue",
-  },
-})(Tooltip);
+
+
 const pageLimit = 4;
 
 export default function CustomerList(props) {
@@ -90,6 +86,7 @@ export default function CustomerList(props) {
       });
   };
 
+ 
   const handleRemove = (id) => {
     axios
       .delete(`http://localhost:8080/api/customer/${id}`, { headers })
@@ -99,6 +96,7 @@ export default function CustomerList(props) {
 
         const posts = data.filter((customer) => customer._id !== id);
         setData(posts);
+        notifyDelete();
       });
   };
 
@@ -113,10 +111,47 @@ export default function CustomerList(props) {
       )
       .then((res) => {
         console.log(res);
-
-        alert(res.data.message);
+     
+       notifyBlocked()
+      
       });
   };
+
+
+  const notifyBlocked = () => {
+  
+    console.log("notify")
+    toast.dark(' Data Updated Successfully', {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      });
+  
+
+  
+
+}
+const notifyDelete = ()=>{
+  toast.error('Customer deleted Successfully', {
+    position: "top-center",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    });
+}
+
+
+
+
+
+
   let history = useHistory();
 
   const handlePush = (userid) => {
@@ -134,40 +169,61 @@ export default function CustomerList(props) {
             <td>{customer.mobile}</td>
             <td>{customer.email}</td>
 
-            <td>{customer.accessLevel}</td>
             <td>{customer.gender}</td>
             <td>{customer.city}</td>
-            <td>active</td>
+        <td>{customer.isBlocked === true ? <td>Block</td>: <td>Active</td>}</td>
             <td>
               {" "}
               <IconButton>
-                <BlockIcon
-                  color="primary"
-                  onClick={() => handleBlock(customer)}
-                />{" "}
+                <ReactTooltip id = "block" effect ="solid" backgroundColor ="black"/>
+                {customer.isBlocked === true ? 
+                 <BlockIcon
+                 data-tip ="Unblock"
+                 data-for ="block"
+                 color="primary"
+                 onClick={() => handleBlock(customer)}
+               /> :
+               <BlockIcon
+               data-tip ="Block"
+               data-for ="block"
+               color="primary"
+               onClick={() => handleBlock(customer)}
+             />
+
+              }
+               
               </IconButton>
               <IconButton>
+                <ReactTooltip id = "delete" effect ="solid" backgroundColor="red"/>
                 <DeleteIcon
+                data-tip ="Delete"
+                data-for ="delete"
                   color="primary"
                   onClick={() => handleRemove(customer._id)}
                 />
               </IconButton>
               <IconButton>
+              <ReactTooltip id = "edit" effect ="solid" backgroundColor="blue"/>
                 <EditIcon
+                  data-tip ="Edit"
+                  data-for ="edit"
                   color="primary"
                   onClick={() => handlePush(customer._id)}
                 />
               </IconButton>
-              <GreenTooltip title="Profile" arrow>
+            
                 <IconButton>
+                <ReactTooltip id = "profile" effect ="solid" backgroundColor="green"/>
                   <SupervisorAccountTwoToneIcon
                     color="primary"
+                    data-tip ="Profile"
+                    data-for ="profile"
                     onClick={() =>
                       history.push(`/admin/profile:${customer._id}`)
                     }
                   />
                 </IconButton>
-              </GreenTooltip>
+              
             </td>
           </tr>
         );
@@ -219,28 +275,27 @@ export default function CustomerList(props) {
           style={{ margin: "20px", width: "95%" }}
         >
           <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Mobile</th>
-              <th scope="col">Email</th>
-              <th scope="col">Roll</th>
-              <th scope="col">Gender</th>
-              <th scope="col">City</th>
-              <th scope="col">Status</th>
-              <th scope="col">Action</th>
+            <tr style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}>
+              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Name</th>
+              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Mobile</th>
+              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Email</th>
+              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Gender</th>
+              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">City</th>
+              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Status</th>
+              <th style={{textAlign:"center" ,backgroundColor:'gray', color:"white" ,textEmphasisColor:"white"}}  scope="col">Action</th>
             </tr>
           </thead>
           <tbody>{renderCustomer()}</tbody>
         </table>
       </card>
-      {/* <div className="d-flex flex-row py-4 justify-content-end">
+      <div className="d-flex flex-row py-4 justify-content-end">
         <Pagination
           totalRecords={totalRecords}
           pageLimit={pageLimit}
           pageRangeDisplayed={1}
           onChangePage={setCurrentPage}
         />
-      </div> */}
+      </div>
     </div>
   );
 }

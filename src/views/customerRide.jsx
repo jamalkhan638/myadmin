@@ -13,6 +13,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
+import Loader from 'react-loader-spinner'
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -34,13 +35,13 @@ const GreenTooltip = withStyles({
     backgroundColor: "blue",
   },
 })(Tooltip);
-
+const  pageLimit = 50
 export default function CustomerRide(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [data, setData] = useState();
-  
-  
+ const[totalRecords, setTotalRecords]=useState()
+ const [currentPage, setCurrentPage]= useState(1)
   let token = localStorage.getItem("x-access-token");
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -52,21 +53,66 @@ export default function CustomerRide(props) {
   const str = value.replace(":","")
   console.log(str)
 
+  
+
   useEffect(() => {
+  
     axios
-      .get(`http://localhost:8080/api/ride?populate=true/${str}`, {
+      .get(`http://localhost:8080/api/ride?populate=true/${str}&limit=${pageLimit}&page=${currentPage}`, {
         headers,
       })
       .then((res) => {
         console.log(res);
         setData(res.data.data)
+        setTotalRecords(res.data.count)
+        // setPageRange(Math.ceil(res.data.count / PageLimit))
+        // setTotalItemsCount(res.data.count)
+
         
       });
-  }, []);
+  }, [currentPage]);
+
+  
 
 
 
+  // const handlePageChange = (pageNumber) => {
+  //   console.log(pageNumber)
+  //   axios.get(
 
+  //     `http://localhost:8080/api/category/?limit=${PageLimit}&page=${pageNumber}`,
+  //     { headers }
+
+  //   )
+  //     .then(response => {
+
+
+  //       setData(response.data.data)
+
+
+
+  //     },
+  //       (error) => {
+  //         var status = error.response.status
+  //         console.log(error)
+  //       }
+  //     );
+
+  //   console.log(`active page is ${pageNumber}`);
+  //   setActivePage(pageNumber)
+
+  // }
+  // const handleChange = (val) => {
+  //   setSearchInput(val);
+  //   axios
+  //     .get(`http://localhost:8080/api/category/?search=name&q=` + searchInput, {
+  //       headers,
+  //     })
+  //     .then((res) => {
+  //       setData(res.data.data);
+  //       setLoading(false);
+  //     });
+  // };
 
 
   const handleOpen = () => {
@@ -78,6 +124,9 @@ export default function CustomerRide(props) {
   };
 
   return (
+ <div>
+   {data ?
+
     <div>
       <div className="container-fluid">
         <div className="row" style={{ marginLeft: "10px", marginTop: "10px" }}>
@@ -140,14 +189,14 @@ export default function CustomerRide(props) {
           </tbody>
         </table>
       </card>
-      {/* <div className="d-flex flex-row py-4 justify-content-end">
-        <Pagination
-          totalRecords={totalRecords}
-          pageLimit={pageLimit}
-          pageRangeDisplayed={1}
-          onChangePage={setCurrentPage}
-        />
-      </div> */}
+      <div className="d-flex flex-row py-4 justify-content-end"  style={{ marginLeft: "20px" }}>
+              <Pagination
+                totalRecords={totalRecords}
+                pageLimit={pageLimit}
+                pageRangeDisplayed={1}
+                onChangePage={setCurrentPage}
+      />
+            </div>
 
       <Modal
         aria-labelledby="transition-modal-title"
@@ -171,5 +220,19 @@ export default function CustomerRide(props) {
         </Fade>
       </Modal>
     </div>
+        :   <div style={{marginLeft : 450, marginTop: 80, marginBottom: 50}}>  <Loader
+        type="Puff"
+ color="grey"
+ height={100}
+ align = "centre"
+ width={100}
+ margin ="500px"
+ timeout={3000}
+ visible={true} //3 secs
+
+/>
+
+</div>  }
+</div>
   );
 }

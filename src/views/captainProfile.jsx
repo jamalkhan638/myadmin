@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import EditIcon from '@material-ui/icons/Edit';
 import { useHistory } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
@@ -26,6 +27,14 @@ import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Collapse from '@material-ui/core/Collapse';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import DatePicker from "react-datepicker";
+import Divider from '@material-ui/core/Divider';
+import "react-datepicker/dist/react-datepicker.css";
+import { Facebook } from "react-content-loader";
+import ReactTooltip from 'react-tooltip';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+const MyFacebookLoader = () => <Facebook />;
 var Line = require('rc-progress').Line;
 
 const useStyles = makeStyles((theme) => ({
@@ -51,9 +60,9 @@ const useStyles = makeStyles((theme) => ({
  
 }));
 export default function CaptainProfile(props) {
-  const [selectedDate1, setSelectedDate1] = React.useState(new Date());
-  const [selectedDate2, setSelectedDate2] = React.useState(new Date());
-
+  
+  const [startDate1, setStartDate1] = useState(new Date());
+  const [startDate2, setStartDate2] = useState(new Date());
   const classes = useStyles();
   const [checked, setChecked] = React.useState(false);
   const [data, setData] = useState("");
@@ -64,7 +73,7 @@ export default function CaptainProfile(props) {
   const [mobile, setMob] = useState("");
   const [city, setCity] = useState("");
   const [status, setStatus] = useState("");
-  const [ride, setRide] = useState("");
+  const [ride, setRide] = useState("0");
   const [driverRide,setDriverRide]=useState("")
   const [report, setReport] = useState("");
   const [rating,setRating]=useState()
@@ -106,14 +115,14 @@ export default function CaptainProfile(props) {
         setCity(res.data.city);
         setRating(res.data.rating)
         console.log(res.data.avatar)
+        console.log(res.data._id)
         setPic(res.data.avatar)
-        console.log(pic)
-        setId(res.data.id)
-  console.log(id)
+        setId(res.data._id)
+       
         res.data.isBlocked === true ? setStatus("block") : setStatus("active");
       });
   }, []);
-
+  console.log(id)
   const handleChange = () => {
     setChecked((prev) => !prev);
   };
@@ -125,8 +134,21 @@ export default function CaptainProfile(props) {
     
   };
   
+  const showReport =(userid)=>{
+    console.log(userid)
+    history.push(`/admin/captainReport:${userid}`)
+    
+  };
+
+// const handleSubmit =()=>{
+
+//   console.log("hello")
 
 
+// }
+
+console.log(startDate1)
+console.log(startDate2)
 
   useEffect(() => {
     axios
@@ -164,22 +186,70 @@ export default function CaptainProfile(props) {
       });
   }, []);
 
+  
+
  const handleDate=()=>{
 
   axios
-      .get(`http://localhost:8080/api/driver//get-stats/${str}+ `, {
+      .get(`http://localhost:8080/api/driver/get-stats/${str}?dateFrom=${startDate1}&dateTo=${startDate2}`, {
         headers,
       })
       .then((res) => {
         console.log(res);
-   
+        setDriverEarning(res.data.earnings.driverEarnings)
+        setCompanyEarning(res.data.earnings.companyEarnings)
+        setClosing(res.data.earnings.closing)
+        setTotalDistance(res.data.earnings.totalDistance)
+        setRide(res.data.rides)
+        setReport(res.data.reports)
+        setOnlineTime(res.data.onlineMins)
        
       });
 
  }
+ const BlockItemFromState = (driver) => {
+    console.log(driver)
+  axios.patch(
+    `http://localhost:8080/api/driver/block/${driver}`,{},
+    {
+      headers
+    }
+
+  )
+    .then(response => {
+
+      notifyBlocked()
+
+
+    },
+      (error) => {
+        var status = error.response.status
+        console.log(status)
+      }
+    );
+
+}
 
 
 
+
+ const notifyBlocked = () => {
+  
+  console.log("notify")
+  toast.dark(' Captain blocked Successfully', {
+    position: "top-center",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    });
+
+
+
+
+}
 
 
 
@@ -188,6 +258,8 @@ export default function CaptainProfile(props) {
 
   return (
     <div>
+    { name? 
+    <div>
             
 
       <Row>
@@ -195,17 +267,43 @@ export default function CaptainProfile(props) {
      
      
           <Card
-       
+    
+              
 
-  
-
-
-            title="Profile"
             content={
               <div>
+                <Row>
+                  <Col md= {6}>
+                <b  style={{
+                    color: "grey",
+                    fontSize: 25,
+                    fontWeight: "400",
+                    padding: 8,
+                    margin: 10,
+                  }}  >Profile</b>
+                  </Col>
+                  <Col md= {3}  style={{  marginTop: -10, marginLeft: 120}}>
+                    <div>
+                    <IconButton>
+                    <ReactTooltip id ="edit" effect ="solid" backgroundColor= "blue" />
+                    <EditIcon color="primary"
+                    data-tip="Edit"
+                    data-for="edit"
+                    style={{ fontSize: 35, }}
+                    onClick={() =>
+                      history.push(`/admin/editCaptain:${str}`)
+                    }
+                     />
+                  </IconButton>
+                    </div>
+                   
+                  </Col>
+                </Row>
+               
+                <Divider />
                 <Col md= {4}>
                 <span>
-                <Avatar    src ={`https://malta-images.s3.amazonaws.com/${pic}`} size="150"  round={true} />
+                <Avatar    src ={`https://malta-images.s3.amazonaws.com/${pic}`} size="150"  round={true} style ={{ margin: 20}}  />
                 </span>
                 </Col>
           <Row>
@@ -219,6 +317,7 @@ export default function CaptainProfile(props) {
       starSpacing = "1"
 
     />
+    <p style={{margin: 20 }}>Rating: {rating}</p>
                </Col>
                </Row>  
     
@@ -267,18 +366,36 @@ export default function CaptainProfile(props) {
     
               <Card 
            
-            title="Action"
+       
             content={
+
               <div>
+                
+                  <b  style={{
+                    color: "grey",
+                    fontSize: 25,
+                    fontWeight: "450",
+                    marginTop: 30
+                  }}  >Action</b>
+   <Divider />
                 <IconButton>
+                <ReactTooltip id ="block" effect ="solid" backgroundColor= "black" />
                   <BlockIcon
-                    style={{ fontSize: 45, margin: 15 }}
+                  data-tip="Block"
+                  data-for="block"
+                    style={{ fontSize: 35, margin: 15 }}
                     color="primary"
+                    onClick={e => {
+                      BlockItemFromState(id); 
+                    }}
                   />{" "}
                 </IconButton>
                 <IconButton>
+                <ReactTooltip id ="ride" effect ="solid" backgroundColor= "red" />
                   <AirportShuttleTwoToneIcon
-                    style={{ fontSize: 45, margin: 15 }}
+                  data-tip ="Rides"
+                  data-for="ride"
+                    style={{ fontSize: 35, margin: 15 }}
                     color="primary"
                     onClick={e => { showRide(str)
                     }
@@ -287,9 +404,16 @@ export default function CaptainProfile(props) {
                   />
                 </IconButton>
                 <IconButton>
+                <ReactTooltip id ="report" effect ="solid" backgroundColor= "green" />
                   <AssessmentTwoToneIcon
-                    style={{ fontSize: 45, margin: 15 }}
+                     data-tip ="Reports"
+                     data-for="report"
+                    style={{ fontSize: 35, margin: 15 }}
                     color="primary"
+                    onClick={e => { showReport(str)
+                    }
+
+                    }
                   />
                 </IconButton>
               </div>
@@ -302,62 +426,64 @@ export default function CaptainProfile(props) {
 
           <Card
            
-   title = "Statistics"
 
 
             content={
+
               <div>
+                  <b  style={{
+                    color: "grey",
+                    fontSize: 25,
+                    fontWeight: "450",
+                    marginTop: 30
+                  }}  >Statistics</b>
+   <Divider />
               <div >
               <FormControlLabel
                 control={<Switch checked={checked} onChange={handleChange} />}
                 label="Apply Filters"
               />
 
-              <div className={classes.container}>
+              <div>
                 <Collapse in={checked}>
-                  <Paper elevation={4} className={classes.paper}>
-    
-                  <form className={classes.container} noValidate >
+     
+    <Row>
+    <div  style={{
+                   marginTop: 10,
+                  margin: 15,
+     }} >
+<p>From</p>
+   <DatePicker  
+      selected={startDate1}
+      onChange={date => setStartDate1(date)}
+      isClearable
+      placeholderText="I have been cleared!"
+    />
+
+<p>To</p>
+   <DatePicker  style={{
+                   marginTop: 50,
+                  margin: 60,
             
-                    <TextField
-          id="date"
-          label="From"
-          type="date"
-          value={selectedDate1}
-          onChange={(e) => setSelectedDate1(e.target.value)}
-         defaultValue="2017-05-24"
-        className={classes.textField}
-        InputLabelProps={{
-          shrink: true,
-        }}
-      />
-       <TextField
-        id="date"
-        label="To"
-        type="date"
-        value ={selectedDate2}
-        onChange={(e) => setSelectedDate2(e.target.value)}
-        defaultValue="2017-05-24"
-        className={classes.textField}
-        InputLabelProps={{
-          shrink: true,
-        }}
-      />
-                   
-                 
-
-
-    </form>
-
-                  </Paper>
+    }}
+      selected={startDate2}
+      onChange={date => setStartDate2(date)}
+      isClearable
+      placeholderText="I have been cleared!"
+    />
+            
+    </div>
+    </Row>
           
                   <Button
             type ="submit"
             disabled={false}
             color="primary"
+            marginTop ="20px"
             variant="contained"
             size="small"
-            onClick ={()=>{handleDate()}}
+            onClick={()=>{handleDate()}}
+            
           >
             Submit
           </Button>
@@ -404,7 +530,7 @@ export default function CaptainProfile(props) {
             disabled={false}
             variant="contained"
             size="large"
-            style={{ marginTop: "20px", backgroundColor: "gray" }}
+            style={{ marginTop: "20px", backgroundColor: "gray" , color:"white"}}
             onClick={() => {
               history.push("/admin/captain");
             }}
@@ -414,5 +540,9 @@ export default function CaptainProfile(props) {
         </Col>
       </Row>
     </div>
+: <MyFacebookLoader />}
+    </div>
+
+
   );
 }

@@ -19,6 +19,14 @@ import { useLocation } from "react-router-dom";
 import AirportShuttleTwoToneIcon from "@material-ui/icons/AirportShuttleTwoTone";
 import AssessmentTwoToneIcon from "@material-ui/icons/AssessmentTwoTone";
 import { StraightenTwoTone } from "@material-ui/icons";
+import Divider from '@material-ui/core/Divider';
+import ReactTooltip from 'react-tooltip';
+import EditIcon from '@material-ui/icons/Edit';
+import { Facebook } from "react-content-loader";
+import {  toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+const MyFacebookLoader = () => <Facebook />;
+
 
 export default function Profile(props) {
   const [data, setData] = useState("");
@@ -51,7 +59,7 @@ export default function Profile(props) {
         setGender(res.data.gender);
         setMob(res.data.mobile);
         setCity(res.data.city);
-
+        
         res.data.isBlocked === true ? setStatus("block") : setStatus("active");
       });
   }, []);
@@ -76,16 +84,88 @@ export default function Profile(props) {
       });
   }, []);
 
+
+
+  const handleBlock = () => {
+    // const myUrl  = "http://localhost:8080/api/customer/"
+
+    axios
+      .patch(
+        `http://localhost:8080/api/customer/block/${str}`,
+        {},
+        { headers }
+      )
+      .then((res) => {
+        console.log(res);
+     
+       notifyBlocked()
+      
+      });
+  };
+
+
+
+  const notifyBlocked = () => {
+  
+    console.log("notify")
+    toast.dark(' Data Updated Successfully', {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      });
+  
+    }
+
   const history = useHistory();
 
   return (
     <div>
+      { name ? 
+
+    <div>
       <Row>
         <Col md={6}>
           <Card
-            title="Profile"
+           
             content={
-              <div style={{ padding: "60px" }}>
+
+              <div >
+
+<Row>
+                  <Col md= {6}>
+                <b  style={{
+                    color: "grey",
+                    fontSize: 25,
+                    fontWeight: "400",
+                    padding: 8,
+                    margin: 10,
+                  }}  >Profile</b>
+                  </Col>
+                  <Col md= {3}  style={{  marginTop: -10, marginLeft: 120}}>
+                    <div>
+                    <IconButton>
+                    <ReactTooltip id ="edit" effect ="solid" backgroundColor= "blue" />
+                    <EditIcon color="primary"
+                    data-tip ="Edit"
+                    data-for="edit"
+                    style={{ fontSize: 35, }}
+                    onClick={() =>
+                      history.push(`/admin/editCustomer:${str}`)
+                    }
+                     />
+                  </IconButton>
+                    </div>
+                   
+                  </Col>
+                </Row>
+               
+                <Divider />
+
+                <div style={{ padding: "60px" }}>
                 <b
                   style={{
                     color: "#1273DE",
@@ -104,23 +184,48 @@ export default function Profile(props) {
                 <p>{gender} </p>
                 <b style={{ color: "#1273DE", fontSize: 18 }}>City:</b>
                 <p> {city} </p>
+                </div>
               </div>
             }
           />
         </Col>
         <Col md={4}>
           <Card
-            title="Action"
+       
             content={
               <div>
+                  <b  style={{
+                    color: "grey",
+                    fontSize: 25,
+                    fontWeight: "450",
+                    marginTop: 30
+                  }}  >Action</b>
+   <Divider />
                 <IconButton>
-                  <BlockIcon
+
+                <ReactTooltip id ="block" effect ="solid" backgroundColor= "black" />
+                {status === "block" ? <BlockIcon
+                   data-tip="Unblock"
+                   data-for="block"
                     style={{ fontSize: 45, margin: 15 }}
                     color="primary"
-                  />{" "}
+                    onClick ={()=> handleBlock()}
+                  />: 
+                  <BlockIcon
+                  data-tip="Block"
+                  data-for="block"
+                   style={{ fontSize: 45, margin: 15 }}
+                   color="primary"
+                   onClick ={()=> handleBlock()}
+                 />
+                  }
+                  
                 </IconButton>
                 <IconButton>
+                <ReactTooltip id ="ride" effect ="solid" backgroundColor= "green" />
                   <AirportShuttleTwoToneIcon
+                  data-tip="Rides"
+                  data-for="ride"
                     style={{ fontSize: 45, margin: 15 }}
                     color="primary"
                     onClick={() =>
@@ -129,7 +234,10 @@ export default function Profile(props) {
                   />
                 </IconButton>
                 <IconButton>
+                <ReactTooltip id ="report" effect ="solid" backgroundColor= "red" />
                   <AssessmentTwoToneIcon
+                   data-tip="Reports"
+                   data-for="report"
                     style={{ fontSize: 45, margin: 15 }}
                     color="primary"
                     onClick={() =>
@@ -141,14 +249,24 @@ export default function Profile(props) {
             }
           />
           <Card
-            title="Statistic"
+
             content={
-              <div style={{}}>
+
+              <div >
+                <b  style={{
+                    color: "grey",
+                    fontSize: 25,
+                    fontWeight: "450",
+                    marginTop: 30
+                  }}  >Statistics</b>
+   <Divider />
+
                 <b
                   style={{
                     color: "#1273DE",
                     fontSize: 18,
                     fontWeight: "600",
+               
                   }}
                 >
                   Status:
@@ -169,15 +287,17 @@ export default function Profile(props) {
             disabled={false}
             variant="contained"
             size="large"
-            style={{ marginTop: "20px", backgroundColor: "gray" }}
-            // onClick={() => {
-            //   history.push("/admin/customer");
-            // }}
+            style={{ marginTop: "20px", backgroundColor: "gray", color: "white"}}
+            onClick={() => {
+              history.push("/admin/customer");
+            }}
           >
             Cancel
           </Button>
         </Col>
       </Row>
     </div>
+ : <MyFacebookLoader />}
+</div>
   );
 }

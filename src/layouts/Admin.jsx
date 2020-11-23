@@ -45,6 +45,8 @@ import CustomerRide from '../views/customerRide';
 import EditCustomer from '../views/editCustomer'
 import CustomerReport from "views/customerReport";
 import CaptainReport from '../views/captainReport'
+import EditCaptain from "views/editCaptain";
+import ShowCaptainRideDetail from "views/showcaptainRideDetail";
 class Admin extends Component {
   constructor(props) {
     super(props);
@@ -405,7 +407,14 @@ class Admin extends Component {
             )}
            
           />
-
+  <Route
+            path='/admin/editCaptain:id'
+            render={props => (
+              <EditCaptain {...props}
+              />
+            )}
+           
+          />
 <Route
             path='/admin/customerReport:id'
             render={props => (
@@ -419,6 +428,14 @@ class Admin extends Component {
             path='/admin/captainReport:id'
             render={props => (
               <CaptainReport {...props}
+              />
+            )}
+           
+          />
+          <Route
+            path='/admin/showcaptainRideDetail:id'
+            render={props => (
+              <ShowCaptainRideDetail {...props}
               />
             )}
            

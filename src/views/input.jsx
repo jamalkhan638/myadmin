@@ -18,20 +18,16 @@ import Fade from "@material-ui/core/Fade";
 import { Card } from "components/Card/Card.jsx";
 import AirportShuttleIcon from '@material-ui/icons/AirportShuttle';
 import Alert from '@material-ui/lab/Alert';
-
+import ReactTooltip from 'react-tooltip';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid'
+import { string } from "prop-types";
+import {  toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
 
-const GreenTooltip = withStyles({
-  tooltip: {
-    fontSize: "1em",
-    color: "white",
-    backgroundColor: "blue",
-  },
-})(Tooltip);
 
 const useStyles = makeStyles((theme) => ({
   roots: {
@@ -94,7 +90,7 @@ let query=false;
       console.log(props.match.params.id)
       const value = props.match.params.id
       const str = value.replace(":","")
-
+   console.log(str)
 
       useEffect(() => {
         // console.log(currentPage)
@@ -157,24 +153,65 @@ const handleSearch=(val)=>{
   })
 }
 
-
+// http://52.77.128.14:8080/api/ride/cancelDriver/5f87f1f7328b72323389d0be
+const cancelRide =()=>{
+  console.log(str)
+  axios.patch(`http://localhost:8080/api/ride/cancelDriver/${str}`,{},{headers})
+  .then(res=>{
+    console.log(res)
+    console.log(res.data)
+    if(res.data === "cancelled"){
+      notifyCancel();
+    }
+    
+  })
+}
 
     const handleAssign =()=>{
-        axios.patch(`http://localhost:8080/api/ride/accept-ride/${str}`, {driver:id},{headers})
+      console.log(str)
+      
+    
+        axios.patch(`http://localhost:8080/api/ride/accept-ride1/${str}`, {driver:id,lat:33.593934, lng:73.065291},{headers})
         .then(res=>{
             console.log(res)
-            
+            console.log(res.data)
+          if(res.data === "Ride assigned"){
+            notifyAssign();
+          }
             
         })
+     
     }
 
-
+    const notifyCancel = ()=>{
+      toast.info('Driver Cancelled', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
+    const notifyAssign = ()=>{
+      toast.success('Ride Assign Successfully', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    }
     const handleOpen = (id) => {
-    
+      setId(id)
      
          axios.get(`http://localhost:8080/api/driver/${id}`, {headers})
          .then((res)=>{
-           setName(res.data.name);
+           
+                      setName(res.data.name);
            setEmail(res.data.email);
            setMobile(res.data.mobile)
            setGender(res.data.gender)
@@ -184,7 +221,7 @@ const handleSearch=(val)=>{
       
 
     };
-    
+    console.log(id)
   
     const handleClose = () => {
       setOpen(false);
@@ -208,19 +245,21 @@ const handleSearch=(val)=>{
                 <td>
                   {" "}
              
-                  
+               
                   
               
-                  <GreenTooltip title="Assign Ride" arrow>
                     <IconButton>
+                      <ReactTooltip id = "ride" effect ="solid" backgroundColor ="red"/>
                       <AirportShuttleIcon style={{ fontSize: 45 }}
+                      data-for ="ride"
+                      data-tip ="Cancel driver and Assign Ride"
                         color="primary"
                         onClick={()=>handleOpen(driver._id)}
                        
                       />
                      
                     </IconButton>
-                  </GreenTooltip>
+                
                 
                 </td>
               </tr>
@@ -369,9 +408,17 @@ const handleSearch=(val)=>{
           <div className={classes.paper}>
           
           <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={6}>
-          <Paper >Driver</Paper>
+      <Grid container spacing={12}>
+        <Grid item xs={12}>
+          <Paper style = {{padding: 10, marginBottom: 30}} > <b
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "600",
+                    marginLeft: 120
+                  }}
+                >
+                  Driver Information
+                </b></Paper>
         </Grid>
        
         </Grid>
@@ -419,7 +466,7 @@ const handleSearch=(val)=>{
         <Row>
           <Col
           md={4}>
-   <Button
+   <Button style ={{ backgroundColor : "green", marginTop : 40}}
               disabled={false}
               variant="contained"
               size="medium"
@@ -429,6 +476,21 @@ const handleSearch=(val)=>{
             >
               Assign Ride
             </Button>
+
+          </Col>
+          <Col
+          md={6}>
+   <Button style = {{marginLeft : 80, backgroundColor: "red", marginTop : 40}}
+              disabled={false}
+              variant="contained"
+              size="medium"
+              color="primary"
+              align="center"
+              onClick= {()=> cancelRide()}
+            >
+              cancel Driver
+            </Button>
+            
           </Col>
        
         </Row>
