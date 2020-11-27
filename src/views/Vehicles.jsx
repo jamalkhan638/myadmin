@@ -22,7 +22,7 @@ export default function Vehicles(props) {
   const [data, setData] = useState([])
   const [PageLimit, setPageLimit] = useState(5)
   const [searchData, setSearchData] = useState("");
-
+const [avalible,setAvalible]= useState()
   let token = localStorage.getItem('x-access-token');
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -132,6 +132,31 @@ export default function Vehicles(props) {
 
   }
 
+
+  const showAvailble =(id)=>{
+    console.log(id)
+  axios.get(  `http://localhost:8080/api/vehicle/${id}`,
+      {
+        headers
+      }
+)
+    
+      .then(response => {
+      console.log(response);   
+       if(response.data.isAvailable === false)
+       {
+         setAvalible(true)
+       }
+  }
+      )
+}
+
+
+const handlePush= (userID)=>{
+  console.log(userID)
+  history.push(`/admin/addVehicles:${userID}`)
+}
+console.log(avalible)
   const ActiveRenderBody = () => {
 
       return data.map((admin) => {
@@ -146,11 +171,16 @@ export default function Vehicles(props) {
                 <td>{admin.categoryName}</td>
                 <td>{admin.color}</td>
                 <td>{admin.year}</td>
-                {admin.isAvailable}
-                <td>{admin.isAvailable?'Available':'Unavailable'}</td>
+               
+                {admin.isAvailable === true ? <td> {'Available'  
+} </td> : <td>{('Unavailable'), <Button variant="outlined" color="primary" onClick={e => {
+             showAvailble(admin._id); 
+            }}>
+             mark Availible
+</Button> }</td>} 
                 <td>  <IconButton>
                   <BlockIcon color="primary" onClick={e => {
-                    BlockItemFromState(admin)
+               handlePush(admin._id)
                   }
 
                   } /> </IconButton>
@@ -236,10 +266,10 @@ export default function Vehicles(props) {
         <div className="row" style={{ marginLeft: "10px", marginTop: "10px" }}>
 
           <div className="col-sm-8">
-            <Button variant="outlined" color="primary" onClick={e => {
-              history.push('/admin/addVehicles')
+          <Button variant="outlined" color="primary" onClick={e => {
+              history.push('/admin/newaddVehicles')
             }}>
-              Add Vehicles
+              Add New Tariff
 </Button>
 
           </div>

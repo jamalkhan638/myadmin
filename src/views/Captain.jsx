@@ -17,7 +17,7 @@ import Loader from 'react-loader-spinner'
 import ReactTooltip from 'react-tooltip';
 import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
- const pageLimit = 3;
+ const pageLimit = 50;
  toast.configure()
 export default function Captain(props) {
 

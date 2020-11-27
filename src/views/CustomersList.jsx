@@ -16,7 +16,7 @@ import 'react-toastify/dist/ReactToastify.css';
 let query = "false";
 
 
-const pageLimit = 4;
+const pageLimit = 50;
 
 export default function CustomerList(props) {
   const [data, setData] = useState([]);
@@ -41,7 +41,7 @@ export default function CustomerList(props) {
   useEffect(() => {
     // console.log(currentPage)
     axios
-      .get(`http://localhost:8080/api/customer?isBlocked=${query}`, { headers })
+      .get(`http://localhost:8080/api/customer?isBlocked=${query}&limit=${pageLimit}&page=${currentPage}`, { headers })
       .then(
         (res) => {
           console.log(res);
@@ -59,7 +59,7 @@ export default function CustomerList(props) {
 
   const handleQuery = (data) => {
     axios
-      .get(`http://localhost:8080/api/customer?isBlocked=${data}`, { headers })
+      .get(`http://localhost:8080/api/customer?isBlocked=${data}&limit=${pageLimit}&page=${currentPage}`, { headers })
       .then((res) => {
         console.log(res);
         setData(res.data.data);

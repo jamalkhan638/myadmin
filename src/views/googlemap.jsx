@@ -22,13 +22,15 @@ export default function Maps () {
 
     )
       .then(response => {
-        console.log(response)
         if(response.data.data!=undefined)
         {
-          setCoords(response.data.data)
+          
       console.log(response.data.data)
-  
+      setCoords(response.data.data)
         }
+
+
+ 
 
       })
 
@@ -37,38 +39,42 @@ export default function Maps () {
     , []);
 
 
-  console.log(coords)
+  
   const mapStyles = {        
     height: "70vh",
     width: "100%"};
   
-    const [ selected, setSelected ] = useState({});
-  
-    const onSelect = item => {
-      console.log(item)
-      setSelected(item);
-    }
-console.log(selected)
-
   const defaultCenter = {
     lat: 33.5954347 , lng: 73.0560426
   }
-  
+  const locations = [
+    {
+      name: "Location 1",
+      location: { 
+        lat: 33.5954347,
+        lng:  73.0560426
+      },
+    },
 
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(success);
-  })
+  ];
+
+  const [ selected, setSelected ] = useState({});
+  
+  const onSelect = item => {
+    setSelected(item);
+  }
 
   const [ currentPosition, setCurrentPosition ] = useState({});
+  
   const success = position => {
     const currentPosition = {
-      lat: position.coords.latitude,
-      lng: position.coords.longitude
+      lat: coords.location.coordinates[1],
+      lng: coords.location.coordinates[0]
     }
     setCurrentPosition(currentPosition);
   };
   
-  
+ 
 
   const google = window.google;
   /*global google*/
@@ -87,52 +93,38 @@ console.log(selected)
   return (
    
      <LoadScript
-       googleMapsApiKey='AIzaSyBxYw5G0qvFEOMxHiTteQ0WOVUF9EnmsSg'>
+       googleMapsApiKey='AIzaSyA_WObUiYD7YpoYufR84re1LZHAJeAGXkY'>
          <GoogleMap
           mapContainerStyle={mapStyles}
           zoom={13}
-          center={currentPosition}>
+          center={defaultCenter}>
         
-    { coords.map(item => {
-        
-              { console.log(item.location.coordinates[1]) }
+        {
+          (coords.length)
+        ?
+          
+            coords.map(item => {
+              { console.log(item.location.coordinates[1])}
               return (
             
               <Marker position={
-                {     
-                lat:  item.location.coordinates[1],
+                {
+                 
+                lat: item.location.coordinates[1],
                 lng:  item.location.coordinates[0]
                 }
-
               }
               icon={icon}
-              onClick={() => onSelect(item)}
-           
               />
               )
-            
             })
+          
+          :
+          null
+          }
+
          
-            }
-         
-         {console.log(selected.location)}
-         {
-   
-            selected.location && 
-        
-            (
-             
-              <InfoWindow
-              position={selected.location}
-              clickable={true}
-              onCloseClick={() => setSelected({})}
-            >
-              <p>{selected.city}</p>
-            </InfoWindow>
-            )
-         }
-         
-          {/* {
+          {
             selected.location && 
             (
               <InfoWindow
@@ -143,7 +135,7 @@ console.log(selected)
               <p>{selected.name}</p>
             </InfoWindow>
             )
-         } */}
+         }
          
          </GoogleMap>
      </LoadScript>

@@ -47,6 +47,7 @@ import CustomerReport from "views/customerReport";
 import CaptainReport from '../views/captainReport'
 import EditCaptain from "views/editCaptain";
 import ShowCaptainRideDetail from "views/showcaptainRideDetail";
+import Ledger from "views/ledger";
 class Admin extends Component {
   constructor(props) {
     super(props);
@@ -296,9 +297,19 @@ class Admin extends Component {
            
           />
               <Route
-            path='/admin/addVehicles'
+            path='/admin/addVehicles:id'
             render={props => (
-              <AddVehicles
+              <AddVehicles {...props}
+                
+              />
+              
+            )}
+           
+          />
+           <Route
+            path='/admin/newaddVehicles'
+            render={props => (
+              <AddVehicles {...props}
                 
               />
               
@@ -379,6 +390,14 @@ class Admin extends Component {
             path='/admin/captainProfile:id'
             render={props => (
               <CaptainProfile {...props}
+              />
+            )}
+           
+          />
+           <Route
+            path='/admin/ledger:id'
+            render={props => (
+              <Ledger {...props}
               />
             )}
            

@@ -521,9 +521,16 @@ console.log(startDate2)
                 <b style={{ color: "#1273DE", fontSize: 15 }}>Closing Balance:</b>
                 <p>{closing} PKR</p>
               </div>
+
+           
              </div>
             }
           />
+             <Button variant = "contained" size = "large" color ="primary" 
+     onClick={() =>
+      history.push(`/admin/ledger:${str}`)
+    }
+             >Get Ledger</Button>
         </Col>
         <Col>
           <Button

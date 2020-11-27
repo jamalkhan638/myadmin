@@ -39,27 +39,115 @@ export default function AddVehicles(props) {
   const [Color, setColor] = useState('')
   const [Manufacture, setManufacture] = useState('')
   const [PlateNumber, setPlateNumber] = useState('')
-  const [Category, setCategory] = useState([])
+  const [category, setCategory] = useState([])
   const[selectedTeam,setSelectedTeam]=useState("Select Category")
   const [selectId,setSelectId]=useState('')
-
-
-  let history = useHistory();
  
-
-  useEffect(() => {
+  // let id=undefined
+  // let value=undefined
+  let history = useHistory();
+  let id=undefined
+  let value=undefined
+  // const value = props.match.params.id
+  // const str = value.replace(":","")
+  // console.log(str)
+//   useEffect(() => {
     
-    axios.get(`http://localhost:8080/api/category`,{headers:headers})
-    .then(response => {
- setCategory(response.data.data)
-}
+//     axios.get(`http://localhost:8080/api/vehicle${str}`,{headers:headers})
+//     .then(response => {
+// console.log(response)
+ 
+// }
   
+
+//     )
+  
+    
+//     }
+//     , []);
+
+useEffect(() => {
+  if(props.match.params.id != undefined){
+  console.log(props.match.params.id)
+  const value = props.match.params.id
+  const id = value.replace(":", "")
+  console.log(id)
+   
+    axios.get(
+
+      `http://localhost:8080/api/vehicle/${id}`,
+      { headers }
 
     )
-  
-    
+      .then(response => { 
+        console.log(response)
+      setName(response.data.name);
+      setRestrationYear(response.data.year)
+      setColor(response.data.color)
+      setManufacture(response.data.make)
+      setPlateNumber(response.data.registration)
+     setSelectId(response.data.category)
+
+
+
+      })
+
+
+
+
+      
     }
-    , []);
+}
+  , []);
+
+console.log(selectId)
+const myid=selectId
+console.log(myid)
+  useEffect(() => {
+    
+   
+    axios.get(
+
+      `http://localhost:8080/api/category/`,
+      { headers }
+
+    )
+      .then(response => {
+        console.log(response)
+setCategory(response.data.data)
+
+      })
+      console.log(id)
+
+
+
+      
+        console.log(id)
+  
+}
+  , []);
+  useEffect(() => {
+    
+   
+    axios.get(
+
+      `http://localhost:8080/api/category/${selectId}`,
+      { headers }
+
+    )
+      .then(response => {
+        console.log(response)
+
+
+      })
+
+
+  
+}
+  , []);
+
+  console.log(category)
+
 
 
   let token = localStorage.getItem('x-access-token');
@@ -70,7 +158,7 @@ export default function AddVehicles(props) {
     "x-access-token": token,
   }
   const handleCancel = (evt) => {
-    history.push('/admin/tariff')
+    history.push('/admin/vehicles')
   }
 
   const handleSubmit = (evt) => {
@@ -83,30 +171,95 @@ export default function AddVehicles(props) {
             color:Color,
             make:Manufacture,
             registration:PlateNumber,
-            category:"5f561b7183171d34ac9c9b64"
-
            
-
-      
-      
+     
 
     };
-   
-    axios.post(`http://localhost:8080/api/vehicle`, user,{headers:headers})
-      .then(response => {
-        if(response.data.message)
-        {
-           console.log(response.data)
+//    if(id != undefined){
+//     axios.patch(`http://localhost:8080/api/vehicle/${id}`,user,{headers:headers})
+//     .then(response => {
+//       if(response.data.message)
+//       {
+//          console.log(response.data)
+//       alert(response.data.message);
+      
+//       }
+//   else{
+//     console.log(response.data)
+//     alert(response.data.message);
+//   }
+// });
+//    }
+//    else  {
+//      axios.post(`http://localhost:8080/api/vehicle`, user, {headers: headers})
+//      .then(res=>{
+//       console.log(res)
+//      })
+//    }
+ 
+
+
+
+if (props.match.params.id != undefined) {
+  axios.patch(`http://localhost:8080/api/vehicle/${id}`, user, { headers: headers })
+    .then(response => {
+      console.log(response)
+      if (response.data.message) {
+console.log(response.data)
         alert(response.data.message);
-        
-        }
-    else{
-      console.log(response.data)
-      alert(response.data.message);
-    }
-});
+
+      }
+      else {
+        console.log(response.data)
+        alert(response.data.message);
+
+      }
+
+
+    })
+
+   
+
+
+
+
+}
+else {
+  axios.post(`http://localhost:8080/api/vehicle`, user, { headers: headers })
+    .then(response => {
+      console.log(response)
+      if (response.data.message) {
+
+        alert(response.data.message);
+
+      }
+      else {
+
+        alert(response.data.message);
+
+      }
+
+    })
+}
+
   }
 
+
+
+
+  useEffect(()=>{
+    axios.get(
+
+      `http://localhost:8080/api/category/${selectId}`,
+      { headers }
+
+    )
+      .then(response => {
+        console.log(response)
+
+
+      })
+  },[])
 
   
 
@@ -203,11 +356,12 @@ export default function AddVehicles(props) {
           setSelectId(e.target.key)
            setSelectedTeam(
               
-               (e.target.value) )
+           (e.target.value))
                
-           } }}
+           }}}
         >
-          {Category.map(cat => (
+          {category  && category.map(cat => 
+          (
             <option
               key={cat._id}
               value={cat.name}

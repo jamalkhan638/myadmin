@@ -148,7 +148,7 @@ export default function Dashboard(props) {
           </Row>
           <Row>
             <Col md={12}>
-              <Card
+              <Card  style={{ height : 50}}
                 statsIcon="fa fa-history"
                 id="chartHours"
                 title={"Driver Found: "+OnlineDrivers}
@@ -156,13 +156,13 @@ export default function Dashboard(props) {
                 stats="Updated 3 minutes ago"
                 
                 content={
-                 
-                   <Maps />
+                 <div style={{ height : 500}}>
+                    <Maps/>
+                   </div>
+                  
                 
                }
-                legend={
-                  <div className="legend">{createLegend(legendSales)}</div>
-                }
+         
               />
             </Col>
             {/* <Col md={4}>

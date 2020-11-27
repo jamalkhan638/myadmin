@@ -102,7 +102,7 @@ export default function CaptainRide(props) {
   const [rideData,setRideData]=useState();
 
 
-  const pageLimit = 10;
+  const pageLimit = 50;
  
   let token = localStorage.getItem("x-access-token");
   const headers = {
@@ -118,7 +118,7 @@ export default function CaptainRide(props) {
   // .get(`http://localhost:8080/api/ride?populate=true/${str}&limit=${pageLimit}&page=${currentPage}
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/api/ride?populate=true&driver=${str}`, {
+      .get(`http://localhost:8080/api/ride?populate=true&driver=${str}&limit=${pageLimit}&page=${currentPage}`, {
         headers,
       })
       .then((res) => {
@@ -128,7 +128,7 @@ export default function CaptainRide(props) {
        console.log(currentPage)
         
       });
-  }, []);
+  }, [currentPage]);
 
 
   // axios.get('http://5e709ac5667af70016317119.mockapi.io/users?page='+currentPage+'&limit='+pageLimit)  
