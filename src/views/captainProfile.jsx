@@ -79,6 +79,11 @@ export default function CaptainProfile(props) {
   const [rating,setRating]=useState()
   const [percentage,setPercentage]=useState()
   const [pic,setPic]=useState("")
+  const [pic1,setPic1]=useState("")
+  const [pic2,setPic2]=useState("")
+  const [pic3,setPic3]=useState("")
+  const [pic4,setPic4]=useState("")
+  const [pic5,setPic5]=useState("")
   const [id,setId]=useState()
   const [driverEarning,setDriverEarning]=useState("0")
   const [companyEarning,setCompanyEarning]=useState("0")
@@ -117,6 +122,11 @@ export default function CaptainProfile(props) {
         console.log(res.data.avatar)
         console.log(res.data._id)
         setPic(res.data.avatar)
+        setPic1(res.data.document1)
+        setPic2(res.data.document2)
+        setPic3(res.data.document3)
+        setPic4(res.data.document4)
+        setPic5(res.data.document5)
         setId(res.data._id)
        
         res.data.isBlocked === true ? setStatus("block") : setStatus("active");
@@ -531,6 +541,10 @@ console.log(startDate2)
       history.push(`/admin/ledger:${str}`)
     }
              >Get Ledger</Button>
+
+
+
+
         </Col>
         <Col>
           <Button
@@ -545,6 +559,44 @@ console.log(startDate2)
             Cancel
           </Button>
         </Col>
+        <div className="row" style={{  margin: "10px" }}>
+    <div className="col-sm-12 " style={{textAlign:"center" ,backgroundColor:'gray', color:"white" , borderRadius:"5px"}} >
+                  <h3> Documents</h3>
+                </div>
+                </div>
+                
+                   <img    src ={`https://malta-images.s3.amazonaws.com/${pic1}`} size="800"  style ={{ margin: 20}}  />
+               
+                  
+                   <img   src ={`https://malta-images.s3.amazonaws.com/${pic2}`} size="800"    style ={{ margin: 20}}  />
+                
+                 
+                
+                  
+                <img    src ={`https://malta-images.s3.amazonaws.com/${pic3}`} size="800"    style ={{ margin: 20}} />
+                
+                  
+              
+                   
+                  <img    src ={`https://malta-images.s3.amazonaws.com/${pic4}`} size="800"    style ={{ margin: 20}}  />
+                  
+        
+                
+                   
+                   <img    src ={`https://malta-images.s3.amazonaws.com/${pic5}`} size="800"    style ={{ margin: 20}}  />
+               
+              
+       
+        
+        <Col>
+        </Col>
+
+
+
+
+
+
+        
       </Row>
     </div>
 : <MyFacebookLoader />}

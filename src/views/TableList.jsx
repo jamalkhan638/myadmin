@@ -32,7 +32,7 @@ export default function TableList(props) {
 
   const baseURL = "http://localhost:8080/api/admin";
   useEffect(() => {
-    setPageRange(5)
+  
     axios.get(
 
       `http://localhost:8080/api/admin/?limit=${PageLimit}&page=${activePg}`,

@@ -10,8 +10,9 @@ import BlockIcon from '@material-ui/icons/Block';
 import Pagination from "react-js-pagination";
 import { FormatAlignCenter } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
-
-
+import EditIcon from '@material-ui/icons/Edit';
+import {  toast } from 'react-toastify';
+import ReactTooltip from 'react-tooltip';
 export default function Vehicles(props) {
 
 
@@ -22,7 +23,8 @@ export default function Vehicles(props) {
   const [data, setData] = useState([])
   const [PageLimit, setPageLimit] = useState(5)
   const [searchData, setSearchData] = useState("");
-const [avalible,setAvalible]= useState()
+const [avalible,setAvalible]= useState('Unavailible')
+const [currentPage, setCurrentPage] = useState();
   let token = localStorage.getItem('x-access-token');
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -45,13 +47,13 @@ const [avalible,setAvalible]= useState()
 //         setPageRange(Math.ceil(response.data.count / PageLimit))
 //         setTotalItemsCount(response.data.count)
 
-//         setData(response.data.data)
+     
 
 
 
 //       })
 
-      let one = `http://localhost:8080/api/vehicle/?limit=${PageLimit}&page=${activePg}`;
+      let one = `http://localhost:8080/api/vehicle/`;
       let two = `http://localhost:8080/api/category/`;
       const requestOne = axios.get(one, { headers });
       const requestTwo = axios.get(two, { headers });
@@ -60,20 +62,31 @@ const [avalible,setAvalible]= useState()
         axios.spread((...responses) => {
           const responseOne = responses[0];
           const responseTwo = responses[1];
+   
  
+
           getAllField(
             responseOne.data.data,
             responseTwo.data.data,
+ console.log(responseOne),
+ console.log(responseOne.data.count),
 
-          );
-        })
+ setPageRange(Math.ceil(responseOne.data.count / PageLimit)),
+ setTotalItemsCount(responseOne.data.count)
+          )
+     
+         
+        }),
+    
+  
       );
   }
-    , []);
+    , [currentPage]);
 
 
     const getAllField = (vehicle, category) => {
       console.log(category);
+      if(vehicle.length!==0){
       for (let i = 0; i < vehicle.length; i++) {
         for (let j = 0; j < category.length; j++) {
           if (category[j]._id == vehicle[i].category) {
@@ -82,6 +95,7 @@ const [avalible,setAvalible]= useState()
         }
       
       }
+    }
   
       setData(vehicle);
     };
@@ -97,14 +111,27 @@ const [avalible,setAvalible]= useState()
 
     )
       .then(response => {
-        alert(response.data.msg)
-      },
-        (error) => {
-          var status = error.response.status
-          console.log(error)
-        }
-      );
+        const posts = data.filter((customer) => customer._id !== id);
+        setData(posts);
+        notifyDelete();
+        
+      })
   }
+
+
+  const notifyDelete = ()=>{
+    toast.error('vehicle deleted Successfully', {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      });
+  }
+
+
 
   const BlockItemFromState = (admin) => {
     
@@ -133,9 +160,9 @@ const [avalible,setAvalible]= useState()
   }
 
 
-  const showAvailble =(id)=>{
-    console.log(id)
-  axios.get(  `http://localhost:8080/api/vehicle/${id}`,
+  const showAvailble =(id,i)=>{
+    console.log(id,i)
+  axios.patch(  `http://localhost:8080/api/vehicle/${id}`, {isAvailable: true},
       {
         headers
       }
@@ -143,12 +170,14 @@ const [avalible,setAvalible]= useState()
     
       .then(response => {
       console.log(response);   
-       if(response.data.isAvailable === false)
-       {
-         setAvalible(true)
-       }
+    
   }
       )
+      const newObj = data.find((item) => id == item._id);
+        const obj1 = { ...newObj, isAvailable: true };
+        data[i] = obj1;
+        setData([...data]);
+     
 }
 
 
@@ -156,10 +185,10 @@ const handlePush= (userID)=>{
   console.log(userID)
   history.push(`/admin/addVehicles:${userID}`)
 }
-console.log(avalible)
+
   const ActiveRenderBody = () => {
 
-      return data.map((admin) => {
+      return data.map((admin,i) => {
         {
    return (
 
@@ -172,20 +201,22 @@ console.log(avalible)
                 <td>{admin.color}</td>
                 <td>{admin.year}</td>
                
-                {admin.isAvailable === true ? <td> {'Available'  
-} </td> : <td>{('Unavailable'), <Button variant="outlined" color="primary" onClick={e => {
-             showAvailble(admin._id); 
+                {admin.isAvailable === true ? <td style ={{color: "blue"}}> {'Availible'  
+} </td> : <td style ={{color: "red"}}> {'Unavalible'} { <Button variant="contained" color="primary" onClick={e => {
+             showAvailble(admin._id,i)
             }}>
-             mark Availible
+             Mark Availible
 </Button> }</td>} 
                 <td>  <IconButton>
-                  <BlockIcon color="primary" onClick={e => {
+                <ReactTooltip id = "edit" effect ="solid" backgroundColor ="green" />
+                  <EditIcon data-for = "edit" data-tip = "Edit" color="primary" onClick={e => {
                handlePush(admin._id)
                   }
 
                   } /> </IconButton>
                   <IconButton>
-                    <DeleteIcon color="primary" onClick={e => {
+                  <ReactTooltip id = "delete" effect ="solid" backgroundColor ="red" />
+                    <DeleteIcon data-tip = "Delete" data-for = "delete" color="primary" onClick={e => {
                       deleteItemFromState(admin._id)
                     }
 
@@ -232,32 +263,32 @@ console.log(avalible)
 
 
 
-  const handlePageChange = (pageNumber) => {
-    console.log(pageNumber)
-    axios.get(
+  // const handlePageChange = (pageNumber) => {
+  //   console.log(pageNumber)
+  //   axios.get(
 
-      `http://localhost:8080/api/vehicle/?limit=${PageLimit}&page=${pageNumber}`,
-      { headers }
+  //     `http://localhost:8080/api/vehicle/?limit=${PageLimit}&page=${currentPage}`,
+  //     { headers }
 
-    )
-      .then(response => {
-
-
-        setData(response.data.data)
+  //   )
+  //     .then(response => {
 
 
+  //       setData(response.data.data)
 
-      },
-        (error) => {
-          var status = error.response.status
-          console.log(error)
-        }
-      );
 
-    console.log(`active page is ${pageNumber}`);
-    setActivePage(pageNumber)
 
-  }
+  //     },
+  //       (error) => {
+  //         var status = error.response.status
+  //         console.log(error)
+  //       }
+  //     );
+
+  //   console.log(`active page is ${pageNumber}`);
+  //   setActivePage(pageNumber)
+
+  // }
 
   return (
 
@@ -266,10 +297,10 @@ console.log(avalible)
         <div className="row" style={{ marginLeft: "10px", marginTop: "10px" }}>
 
           <div className="col-sm-8">
-          <Button variant="outlined" color="primary" onClick={e => {
+          <Button variant="contained" color="primary" onClick={e => {
               history.push('/admin/newaddVehicles')
             }}>
-              Add New Tariff
+              Add New Vehicle
 </Button>
 
           </div>
@@ -296,14 +327,54 @@ console.log(avalible)
         <table className="table table-bordered table-condensed table-responsive table-m8" style={{ margin: "20px", width: "95%" }} >
           <thead>
             <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Registration</th>
-              <th scope="col">Make</th>
-              <th scope="col">Category</th>
-              <th scope="col">Color</th>
-              <th scope="col">Year</th>
-              <th scope="col">Avilability</th>
-              <th scope="col">Actions</th>
+              <th style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }} scope="col">Name</th>
+              <th style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }}scope="col">Registration</th>
+              <th style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }}scope="col">Make</th>
+              <th style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }} scope="col">Category</th>
+              <th style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }} scope="col">Color</th>
+              <th style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }} scope="col">Year</th>
+              <th style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }} scope="col">Avilability</th>
+              <th style={{
+                  textAlign: "center",
+                  backgroundColor: "gray",
+                  color: "white",
+                  textEmphasisColor: "white",
+                }} scope="col">Actions</th>
             </tr>
           </thead>
           <tbody >
@@ -316,13 +387,13 @@ console.log(avalible)
         </table>
       </card>
       <div style={{ marginLeft: "20px" }}>
-        <Pagination
-          activePage={activePg}
+      <Pagination
+          activePage={currentPage}
           itemsCountPerPage={PageLimit}
           //Total record display on
           totalItemsCount={totalItemsCount}
           pageRangeDisplayed={pageRange}
-          onChange={handlePageChange}
+          onChange={setCurrentPage}
         />
       </div>
     </div>

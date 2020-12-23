@@ -48,6 +48,8 @@ import CaptainReport from '../views/captainReport'
 import EditCaptain from "views/editCaptain";
 import ShowCaptainRideDetail from "views/showcaptainRideDetail";
 import Ledger from "views/ledger";
+import CustomerLedger from '../views/customerLedger'
+
 class Admin extends Component {
   constructor(props) {
     super(props);
@@ -56,7 +58,7 @@ class Admin extends Component {
       image: image,
       color: "black",
       hasImage: true,
-      fixedClasses: "dropdown show-dropdown open"
+     
     };
   }
   handleNotificationClick = position => {
@@ -97,10 +99,14 @@ class Admin extends Component {
         return (
           <Route
             path={prop.layout + prop.path}
+         
+
             render={props => (
               <prop.component
                 {...props}
-                handleClick={this.handleNotificationClick}
+                handleClick={this.handleNotificationClick  }
+                
+             
               />
             )}
             key={key}
@@ -203,9 +209,11 @@ class Admin extends Component {
        
           <Route
             path='/admin/dashboard'
+            onClick= {()=>{window.location.reload()}}
             render={props => (
               <Dashboard
                 handleClick={this.handleNotificationClick}
+                
               />
             )}
            
@@ -216,6 +224,7 @@ class Admin extends Component {
             render={props => (
               <Tariff
                 handleClick={this.handleNotificationClick}
+           
               />
             )}
            
@@ -244,6 +253,7 @@ class Admin extends Component {
             path='/admin/captain'
             render={props => (
               <Captain
+  
                 handleClick={this.handleNotificationClick}
               />
             )}
@@ -395,9 +405,25 @@ class Admin extends Component {
            
           />
            <Route
+            path='/admin/captainProfile2'
+            render={props => (
+              <CaptainProfile {...props}
+              />
+            )}
+           
+          />
+           <Route
             path='/admin/ledger:id'
             render={props => (
               <Ledger {...props}
+              />
+            )}
+           
+          />
+             <Route
+            path='/admin/customerLedger:id'
+            render={props => (
+              <CustomerLedger {...props}
               />
             )}
            

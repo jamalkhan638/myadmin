@@ -76,6 +76,7 @@ class Sidebar extends Component {
                     >
                       <i className={prop.icon} />
                       <p>{prop.name}</p>
+                     
                     </NavLink>
                   </li>
                 );

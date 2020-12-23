@@ -11,7 +11,7 @@ import "./assets/css/demo.css";
 import "./assets/css/pe-icon-7-stroke.css";
 import Login from '../src/components/loginForn/Login';
 import AdminLayout from "layouts/Admin.jsx";
-
+import Reports from '../src/views/Reports'
 
 
 ReactDOM.render(
@@ -20,6 +20,7 @@ ReactDOM.render(
       <Route path="/admin" render={props => <AdminLayout {...props} />} />
   
       <Route path="/" render={props => <Login/>} />
+ 
     </Switch>
   </HashRouter>,
   

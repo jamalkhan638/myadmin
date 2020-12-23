@@ -12,13 +12,66 @@ export default function EditCaptain(props) {
   const [gender, setGender] = useState("");
   const [mobile, setMob] = useState("");
   const [city, setCity] = useState("");
-
+  const[selectedVTeam,setSelectedVTeam]=useState("Select Vehicle")
+  const [selectVId,setSelectVId]=useState('')
+  const [vehicle,setVehicle]= useState()
+  const[vehi,setVehi] =useState()
+  const [imgData, setImgData] = useState();
+  const [picture, setPicture] = useState(null);
+const [pic, setPic]=useState()
   let token = localStorage.getItem("x-access-token");
   const headers = {
     "Access-Control-Allow-Origin": "*",
     "Content-type": "Application/json",
     "x-access-token": token,
   };
+
+  const onChangePicture = e => {
+    console.log("picture: ", e.target.files);
+    if (e.target.files[0]) {
+      
+      // console.log("picture: ", e.target.files);
+      setPicture(e.target.files[0]);
+      const reader = new FileReader();
+      console.log(reader)
+      reader.addEventListener("load", () => {
+        setImgData(reader.result);
+      });
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
+
+
+
+  useEffect(() => {
+    
+   
+   
+
+
+
+
+      axios.get(
+
+        `http://localhost:8080/api/vehicle/`,
+        { headers }
+  
+      )
+        .then(response => {
+       
+    setVehicle(response.data.data)
+  
+        })
+      
+    
+  
+}
+  , []);
+
+
+
+
+
 const value = props.match.params.id
 const str = value.replace(":","")
 console.log(str)
@@ -34,6 +87,9 @@ console.log(str)
         setGender(res.data.gender);
         setMob(res.data.mobile);
         setCity(res.data.city);
+        setImgData(res.data.avatar)
+        setPic(res.data.avatar)
+        setSelectVId(res.data.vehicle)
       });
   }, []);
 
@@ -41,20 +97,32 @@ console.log(str)
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const obj = {
-      name:name,
-      password,
-      email,
-      gender,
-      mobile,
-      city
-    };
- console.log(obj)
+    // const obj = {
+    //   name:name,
+    //   password,
+    //   email,
+    //   gender,
+    //   mobile,
+    //   city
+    // };
+
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('mobile', mobile);
+    formData.append('gender', gender);
+    formData.append('city', city);
+    formData.append('vehicle',selectVId);
+    formData.append('avatar', picture);
+
+
     axios
-      .patch(`http://localhost:8080/api/driver/${str}`, obj, {
+      .patch(`http://localhost:8080/api/admin/update-driver/${str}`, formData, {
         headers,
       })
       .then((res) => {
+        console.log(res)
         if (res.status == 201) {
           history.push("/admin/captain");
         } else {
@@ -64,7 +132,9 @@ console.log(str)
   };
 
   return (
+
     <div
+
       className="container-fluid"
       style={{
         alignContent: "center",
@@ -97,7 +167,7 @@ console.log(str)
               size="large"
               style={{ marginTop: "20px", backgroundColor: "gray", color: "white"}}
               onClick={() => {
-                history.push("/admin/captainProfile");
+                history.push("/admin/captain");
               }}
             >
               Cancel
@@ -189,6 +259,76 @@ console.log(str)
               />
             </div>
           </div>
+
+
+          <div className="col-sm-4">
+  <select style={{width:"100%"}}
+
+
+
+     value={selectedVTeam}
+      
+     onChange={e =>{{
+     let item = vehicle.find(veh=> veh.registration === e.target.value)
+     console.log("item",item)
+     setSelectVId((item._id))
+  
+      setSelectedVTeam(
+         e.target.value
+      )
+          
+      }}}
+
+   >
+     {vehicle  && vehicle.map(veh => 
+
+     (
+     
+       <option
+       
+  
+         value={veh.registration}
+        
+        
+       >
+          
+             {veh.registration}
+          
+        
+       
+        
+         
+       </option>
+
+     ))
+ 
+     
+     }
+   </select>
+
+</div>
+
+<div className="col-sm-4"> 
+<label>Add Picture *</label>
+
+                <input id="profilePic" type="file"  onChange={(e)=> onChangePicture(e)} />
+               
+        
+             
+            
+               {picture ===null ?  <img    src = {`https://malta-images.s3.amazonaws.com/${imgData}` }   width={200}
+        height={150} /> 
+      :
+      <img    src = {imgData}   width={200}
+        height={150} />
+      }
+            
+        
+           
+            
+          </div>
+
+
         </div>
 
         <div className="row" style={{ marginLeft: "48%", marginTop: "10px" }}>

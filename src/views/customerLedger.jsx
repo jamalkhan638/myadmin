@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function Ledger(props) {
+export default function CustomerLedger(props) {
   const classes = useStyles();
     const value = props.match.params.id;
     const str = value.replace(":","");
@@ -74,7 +74,6 @@ export default function Ledger(props) {
   
 
   const [data, setData] = useState([]);
-  const [data1, setData1] = useState([]);
   const [open ,setOpen] = useState("");
   const [opens ,setOpens] = useState("");
   const [incomming, setIncomming] =useState("");
@@ -110,30 +109,27 @@ export default function Ledger(props) {
   useEffect(() => {
     console.log(currentPage)
     axios
-      .get(`http://localhost:8080/api/driver/earnings/${str}?limit=${PageLimit}&page=${currentPage}`, { headers })
+      .get(`http://localhost:8080/api/receipt/?customer=${str}`, { headers })
       .then(
         (res) => {
           console.log(res);
+          console.log(res.data.data);
          
-     if(res.data){
+    //  if(res.data.data){
      
-      setPageRange(Math.ceil(res.data.receipts.length / PageLimit))
-      setTotalItemsCount(res.data.receipts.length)
+    //   setPageRange(Math.ceil(res.data.receipts.length / PageLimit))
+    //   setTotalItemsCount(res.data.receipts.length)
    
-     }
+    //  }
+       
+          setData(res.data.data)
          
-          setData(res.data.receipts)
-          if(res.data.length !== 0){
-            setcompanyEarning(res.data.stats.companyEarnings)
-            setDriverEarning(res.data.stats.driverEarnings)
-            setClosing(res.data.stats.closing)
-          }
   
         }
 
        
       );
-  }, [currentPage,data]);
+  }, [data]);
   
   console.log(pageRange)
   console.log(totalItemsCount)
@@ -163,15 +159,8 @@ const handleClose = () => {
 };
 
 
-
-// const newObj = data.find((item) => id == item._id);
-// const obj1 = { ...newObj, isAvailable: true };
-// data[i] = obj1;
-// setData([...data]);
-
-
-
 const handleSubmit=(e)=>{
+  setData(data)
 e.preventDefault();
   const user ={
    incomming,
@@ -181,23 +170,17 @@ e.preventDefault();
   console.log(user)
   console.log("jjjjjjjjjjjjj")
   axios
-  .patch(`http://localhost:8080/api/driver/clear-ledger/${str}`, user, { headers })
+  .patch(`http://localhost:8080/api/customer/reimburse/${str}`, user, { headers })
   .then((res=>{
     
     console.log(res);
-    setData1(res.data)
-    
+     
 
   }))
 
 
-
-
 }
-// const newObj = data
-// const obj1 = { ...newObj, data1};
 
-// setData(...data);
 
   let history = useHistory();
 
@@ -252,45 +235,18 @@ data.length >= 0 &&
       <div>
       <div className="container-fluid">
         <div className="row" style={{ marginLeft: "10px", marginTop: "10px" }}>
-          <div className="col-sm-2">
-    <Paper>
-           <b style={{ color: "#1273DE", fontSize: 15 }}>Total Earning:</b>
-  <p  style={{marginLeft: 40}}> {totalEarning} PKR</p>
-  </Paper>
-                </div>
-             
-                <div className="col-sm-2">
-                <Paper>
-                <b style={{ color: "#1273DE", fontSize: 15 }}>Driver Earning:</b>
-                <p style={{marginLeft: 40}}> {driverEarning} PKR </p>
-                </Paper>
-                </div>
-              
-                <div className="col-sm-2">
-     <Paper>
-             <b style={{ color: "#1273DE", fontSize: 15 }}>Company earning:</b>
-          <p style={{marginLeft: 40}} > {companyEarning} PKR</p>
-          </Paper>
-          </div>
-      
-          <div className="col-sm-2">
-          <Paper>
-          <b style={{ color: "#1273DE", fontSize: 15 }}>Closing Balance:</b>
-          <p  style={{marginLeft: 40}}> {closing} PKR</p>
-          </Paper>
-          </div>
-          
+            
      
           <div className="col-sm-2">
             <div>
             <Button variant ="contained" color ="primary"
-            onClick ={()=>{handleOpen()}}> Clear Ledger </Button>
+            onClick ={()=>{handleOpen()}}> Reimburse </Button>
             </div>
           </div>
           <div className="col-sm-2">
             <div>
             <Button style ={{ backgroundColor: "grey", color : "white"}} variant ="contained" 
-            onClick ={()=>  history.push(`/admin/captainProfile:${str}`)}> Back </Button>
+            onClick ={()=>  history.push(`/admin/profile:${str}`)}> Back </Button>
             </div>
           </div>
         </div>
@@ -443,7 +399,7 @@ data.length >= 0 &&
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle>{" Reason to clear ledger "}</DialogTitle>
+        <DialogTitle>{" Reason to Reimburse "}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
           <p style ={{color :"green"}}>{reason}</p>

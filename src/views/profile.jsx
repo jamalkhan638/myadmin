@@ -188,6 +188,7 @@ export default function Profile(props) {
               </div>
             }
           />
+          
         </Col>
         <Col md={4}>
           <Card
@@ -281,6 +282,11 @@ export default function Profile(props) {
               </div>
             }
           />
+           <Button variant = "contained" size = "large" color ="primary" 
+     onClick={() =>
+      history.push(`/admin/customerLedger:${str}`)
+    }
+             >Get Ledger</Button>
         </Col>
         <Col>
           <Button

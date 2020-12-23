@@ -40,7 +40,17 @@ export default function Captain(props) {
     "x-access-token": token,
   }
 
-  
+  useEffect(()=>{
+  axios.get(`http://localhost:8080/api/customer/count-stats`,
+    { headers })
+    .then(res=>{
+      console.log(res)
+    })
+
+
+
+
+  })
   useEffect(() => {
   
     // axios.get(
@@ -137,7 +147,10 @@ export default function Captain(props) {
 
     )
       .then(response => {
+        const posts = data.filter((customer) => customer._id !== id);
+        setData(posts);
         notifyDelete()
+
       },
   
         (error) => {
@@ -147,7 +160,7 @@ export default function Captain(props) {
       );
   }
 
-  const BlockItemFromState = (driver) => {
+  const BlockItemFromState = (driver,i) => {
     
     axios.patch(
       `http://localhost:8080/api/driver/block/${driver._id}`,{},
@@ -157,6 +170,11 @@ export default function Captain(props) {
 
     )
       .then(response => {
+
+        const newObj = data.find((item) => driver._id == item._id);
+        const obj1 = { ...newObj, isBlocked: true };
+        data[i] = obj1;
+        setData([...data]);
 
         notifyBlocked()
 
@@ -218,8 +236,8 @@ export default function Captain(props) {
   const ActiveRenderBody = () => {
 
     if ( data != null) {
-      return data.map((driver) => {
-        console.log(driver)
+      return data.map((driver,i) => {
+   
         {
 
             return (
@@ -232,7 +250,7 @@ export default function Captain(props) {
                 <td>{driver.vehicleName}</td>
                 <td>{driver.city}</td>
              
-            <td>{ driver.isBlocked === true ? <td>block</td> : <td>active</td>}</td>
+            <td>{ driver.isBlocked === true ? <td style={{ color: "red"}}>block</td> : <td>active</td>}</td>
                 <td style={{textAlign:"center" }}>  
                 
                 <IconButton>
@@ -244,7 +262,7 @@ export default function Captain(props) {
                          data-tip ="Block"
                          data-for = "block"
                        onClick={e => {
-                    BlockItemFromState(driver); 
+                    BlockItemFromState(driver,i); 
                   }}
                  /> </IconButton>
                     

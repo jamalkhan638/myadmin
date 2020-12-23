@@ -18,7 +18,9 @@ const dashboardRoutes = [
     path: "/dashboard",
     name: "Dashboard",
     icon: "pe-7s-graph",
-    layout: "/admin"
+    layout: "/admin",
+   
+  
   },
   {
     
@@ -26,7 +28,8 @@ const dashboardRoutes = [
     name: "Admin",
     icon: "pe-7s-add-user",
   
-    layout: "/admin"
+    layout: "/admin",
+ 
   },
   {
     path: "/tariff",

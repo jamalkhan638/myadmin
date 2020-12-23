@@ -27,8 +27,6 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 
-
-
 const useStyles = makeStyles((theme) => ({
   roots: {
     width: '100%',
@@ -170,7 +168,7 @@ const cancelRide =()=>{
     const handleAssign =()=>{
       console.log(str)
       
-    
+     
         axios.patch(`http://localhost:8080/api/ride/accept-ride1/${str}`, {driver:id,lat:33.593934, lng:73.065291},{headers})
         .then(res=>{
             console.log(res)

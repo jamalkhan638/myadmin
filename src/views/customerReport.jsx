@@ -180,7 +180,7 @@ export default function CustomerReport(props) {
  margin ="500px"
  timeout={3000}
  visible={true} //3 secs
-  text ="no datta"
+ 
  />
 
  </div>  }

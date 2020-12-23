@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
 export default function AddVehicles(props) {
   const classes = useStyles();
 
+
   const [name, setName] = useState('')
   const [regYear, setRestrationYear] = useState('')
   const [Color, setColor] = useState('')
@@ -46,8 +47,7 @@ export default function AddVehicles(props) {
   // let id=undefined
   // let value=undefined
   let history = useHistory();
-  let id=undefined
-  let value=undefined
+
   // const value = props.match.params.id
   // const str = value.replace(":","")
   // console.log(str)
@@ -66,12 +66,21 @@ export default function AddVehicles(props) {
 //     }
 //     , []);
 
+
+
+
+ 
+
+    
+          
+
+
 useEffect(() => {
   if(props.match.params.id != undefined){
-  console.log(props.match.params.id)
+  
   const value = props.match.params.id
   const id = value.replace(":", "")
-  console.log(id)
+
    
     axios.get(
 
@@ -80,7 +89,8 @@ useEffect(() => {
 
     )
       .then(response => { 
-        console.log(response)
+        
+
       setName(response.data.name);
       setRestrationYear(response.data.year)
       setColor(response.data.color)
@@ -100,9 +110,9 @@ useEffect(() => {
 }
   , []);
 
-console.log(selectId)
+
 const myid=selectId
-console.log(myid)
+
   useEffect(() => {
     
    
@@ -113,22 +123,17 @@ console.log(myid)
 
     )
       .then(response => {
-        console.log(response)
-setCategory(response.data.data)
+     
+  setCategory(response.data.data)
 
       })
-      console.log(id)
-
-
-
-      
-        console.log(id)
+    
   
 }
   , []);
+
   useEffect(() => {
     
-   
     axios.get(
 
       `http://localhost:8080/api/category/${selectId}`,
@@ -136,7 +141,7 @@ setCategory(response.data.data)
 
     )
       .then(response => {
-        console.log(response)
+     
 
 
       })
@@ -146,8 +151,8 @@ setCategory(response.data.data)
 }
   , []);
 
-  console.log(category)
-
+  
+ 
 
 
   let token = localStorage.getItem('x-access-token');
@@ -160,14 +165,19 @@ setCategory(response.data.data)
   const handleCancel = (evt) => {
     history.push('/admin/vehicles')
   }
-
+console.log("1",selectId)
+console.log("2", selectedTeam)
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    console.log(selectId)
+
+
+
+
+    console.log("165",selectId)
     const user = {
             name:name,
             year:regYear,
-             
+            category:selectId,
             color:Color,
             make:Manufacture,
             registration:PlateNumber,
@@ -175,6 +185,7 @@ setCategory(response.data.data)
      
 
     };
+    console.log("user",user)
 //    if(id != undefined){
 //     axios.patch(`http://localhost:8080/api/vehicle/${id}`,user,{headers:headers})
 //     .then(response => {
@@ -200,19 +211,18 @@ setCategory(response.data.data)
 
 
 
+
 if (props.match.params.id != undefined) {
+  const value = props.match.params.id
+  const id = value.replace(":","")
   axios.patch(`http://localhost:8080/api/vehicle/${id}`, user, { headers: headers })
     .then(response => {
-      console.log(response)
-      if (response.data.message) {
-console.log(response.data)
-        alert(response.data.message);
-
-      }
-      else {
-        console.log(response.data)
-        alert(response.data.message);
-
+    
+      
+      if (response.status == 201) {
+        history.push("/admin/vehicles");
+      } else {
+        alert("Error");
       }
 
 
@@ -227,17 +237,13 @@ console.log(response.data)
 else {
   axios.post(`http://localhost:8080/api/vehicle`, user, { headers: headers })
     .then(response => {
-      console.log(response)
-      if (response.data.message) {
-
-        alert(response.data.message);
-
-      }
-      else {
-
-        alert(response.data.message);
-
-      }
+  
+     console.log(response)
+     if (response.status == 201) {
+      history.push("/admin/vehicles");
+    } else {
+      alert("Error");
+    }
 
     })
 }
@@ -255,7 +261,7 @@ else {
 
     )
       .then(response => {
-        console.log(response)
+       
 
 
       })
@@ -277,7 +283,7 @@ else {
                 </div>
                 </div>
     
-    <form  onSubmit={handleSubmit}>
+    <form  onSubmit={(evt)=>handleSubmit(evt)}>
 
     <div className="row" style={{  marginTop: "10px" }}>
     <div className="col-sm-10">
@@ -338,7 +344,7 @@ else {
     <div className="col-sm-4">
      <div className="form-group">
        <label htmlFor="number">Plate Number *</label>
-       <input type="number" className="form-control" required value={PlateNumber} onChange={e => setPlateNumber(e.target.value)}
+       <input  className="form-control" required value={PlateNumber} onChange={e => setPlateNumber(e.target.value)}
          name="number" />
      </div>
 </div>
@@ -353,23 +359,33 @@ else {
           value={selectedTeam}
            
           onChange={e =>{{
-          setSelectId(e.target.key)
+          let item = category.find(cat=> cat.name === e.target.value)
+          console.log("item",item)
+          setSelectId((item._id))
+       
            setSelectedTeam(
-              
-           (e.target.value))
+              e.target.value
+           )
                
            }}}
+     
         >
           {category  && category.map(cat => 
           (
+    
             <option
-              key={cat._id}
+            
               value={cat.name}
              
             >
+                
               {cat.name}
             </option>
-          ))}
+
+          ))
+          
+          
+          }
         </select>
 
      </div>
@@ -383,7 +399,7 @@ else {
     <div className="row" style={{marginLeft:"48%", marginTop: "10px" }}>
    
     <button type="submit" className="btn btn-primary btn-mg">
-      Submit
+      Submit 
     </button>
     </div>
     

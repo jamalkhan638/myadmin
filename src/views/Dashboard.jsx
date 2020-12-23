@@ -153,12 +153,12 @@ export default function Dashboard(props) {
                 id="chartHours"
                 title={"Driver Found: "+OnlineDrivers}
                 category="24 Hours performance"
-                stats="Updated 3 minutes ago"
+             
                 
                 content={
-                 <div style={{ height : 500}}>
+                 
                     <Maps/>
-                   </div>
+              
                   
                 
                }
@@ -186,48 +186,8 @@ export default function Dashboard(props) {
             </Col> */}
           </Row>
 
-          <Row>
-            <Col md={6}>
-              <Card
-                id="chartActivity"
-                title="2014 Sales"
-                category="All products including Taxes"
-                stats="Data information certified"
-                statsIcon="fa fa-check"
-                content={
-                  <div className="ct-chart">
-                    <ChartistGraph
-                      data={dataBar}
-                      type="Bar"
-                      options={optionsBar}
-                      responsiveOptions={responsiveBar}
-                    />
-                  </div>
-                }
-                legend={
-                  <div className="legend">{createLegend(legendBar)}</div>
-                }
-              />
-            </Col>
-
-            <Col md={6}>
-              <Card
-                title="Tasks"
-                category="Backend development"
-                stats="Updated 3 minutes ago"
-                statsIcon="fa fa-history"
-                content={
-                  <div className="table-full-width">
-                    <table className="table">
-                      <Tasks />
-                    </table>
-                  </div>
-                }
-              />
-            </Col>
-          </Row>
+         
         </Grid>
       </div>
     );
               }
-

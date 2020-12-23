@@ -100,7 +100,7 @@ export default function CustomerList(props) {
       });
   };
 
-  const handleBlock = (customer) => {
+  const handleBlock = (customer,i) => {
     // const myUrl  = "http://localhost:8080/api/customer/"
 
     axios
@@ -112,6 +112,10 @@ export default function CustomerList(props) {
       .then((res) => {
         console.log(res);
      
+        const newObj = data.find((item) => customer._id == item._id);
+        const obj1 = { ...newObj, isBlocked: true };
+        data[i] = obj1;
+        setData([...data]);
        notifyBlocked()
       
       });
@@ -162,7 +166,7 @@ const notifyDelete = ()=>{
     return (
       data &&
       data.length > 0 &&
-      data.map((customer) => {
+      data.map((customer,i) => {
         return (
           <tr Key={customer._id}>
             <td>{customer.name}</td>
@@ -171,7 +175,7 @@ const notifyDelete = ()=>{
 
             <td>{customer.gender}</td>
             <td>{customer.city}</td>
-        <td>{customer.isBlocked === true ? <td>Block</td>: <td>Active</td>}</td>
+        <td>{customer.isBlocked === true ? <td style={{color: "red"}}> Block</td>: <td>Active</td>}</td>
             <td>
               {" "}
               <IconButton>
@@ -181,13 +185,13 @@ const notifyDelete = ()=>{
                  data-tip ="Unblock"
                  data-for ="block"
                  color="primary"
-                 onClick={() => handleBlock(customer)}
+                 onClick={() => handleBlock(customer,i)}
                /> :
                <BlockIcon
                data-tip ="Block"
                data-for ="block"
                color="primary"
-               onClick={() => handleBlock(customer)}
+               onClick={() => handleBlock(customer,i)}
              />
 
               }
